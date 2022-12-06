@@ -2,9 +2,15 @@
   "name": "core-generator-private",
   "version": "0.0.1",
   "description": "Private repo for the core generator code.",
+  "engines": {
+    "npm": ">=8.0.0",
+    "node": ">=16.0.0 <17.0.0"
+  },
   "main": "index.ts",
   "scripts": {
-    "test": "test"
+    "build": "tsc -noEmit && esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node --target=node16.18",
+    "test": "test",
+    "dev": "ts-node ./src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -26,6 +32,11 @@
     "@typescript-eslint/parser": "^5.45.1",
     "eslint": "^8.29.0",
     "jest": "^29.3.1",
+    "ts-node": "^10.9.1",
     "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@octokit/rest": "^19.0.5",
+    "esbuild": "^0.15.18"
   }
 }
