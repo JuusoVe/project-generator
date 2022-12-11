@@ -12,9 +12,9 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           git config --global user.name "generator [bot]"
-          git config --global user.email "${{ secrets.BOT_EMAIL }}"
+          git config --global user.email "${{ secrets.PIPELINE_GIT_EMAIL }}"
           git config --global credential.helper cache
-          git clone https://${{secrets.ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
+          git clone https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
           cp storefront-repo-template storefront-repo-template-test -r
           cd storefront-repo-template-test
           git add .
