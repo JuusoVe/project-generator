@@ -7,5 +7,6 @@ node_modules/
 #
 dist
 
+# Keep the dev requests private for now. TODO: Use keys from param and share these in the repo.
 *.rest
 

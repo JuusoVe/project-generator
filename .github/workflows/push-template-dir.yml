@@ -1,0 +1,23 @@
+name: Push template dir
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  push-template-to-test-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          storefront-repo-template
+          git config --global user.name "generator [bot]"
+          git config --global user.email "${{ secrets.BOT_EMAIL }}"
+          git config --global credential.helper cache
+          git clone https://${{secrets.ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
+          cp . clonedTemplate
+          cd clonedTemplate
+          git add .
+          git commit -m "Triggered by generator [bot]. Original message: ${{ github.event.head_commit.message }}"
+          git push
