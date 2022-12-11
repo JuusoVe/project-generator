@@ -17,7 +17,7 @@ jobs:
           pwd && ls
           git clone https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
           pwd && ls
-          cp storefront-repo-template/. storefront-repo-template-test -a
+          cp ./storefront-repo-template/. storefront-repo-template-test -a
           pwd && ls
           cd storefront-repo-template-test
           pwd && ls
