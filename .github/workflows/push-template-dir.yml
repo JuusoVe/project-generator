@@ -16,7 +16,8 @@ jobs:
           git config --global credential.helper cache
           git clone https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
           pwd && ls
-          cp -a storefront-repo-template storefront-repo-template-test
+          echo "yay" >> stuff.txt
+          cp -a stuff.txt storefront-repo-template-test
           cd storefront-repo-template-test
           git add .
           set +e
