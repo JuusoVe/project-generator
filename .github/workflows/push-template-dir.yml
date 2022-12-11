@@ -17,8 +17,8 @@ jobs:
           git clone https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
           cp -r storefront-repo-template/. storefront-repo-template-test
           cd storefront-repo-template-test
+          ls
           git add .
-          git status
           set +e
           git status | grep -e modified -e new 
           if [ $? -eq 0 ]
