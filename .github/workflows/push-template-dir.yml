@@ -14,12 +14,13 @@ jobs:
           git config --global user.name "generator [bot]"
           git config --global user.email "${{ secrets.PIPELINE_GIT_EMAIL }}"
           git config --global credential.helper cache
+          pwd && ls
           git clone https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
-          ls && pwd
+          pwd && ls
           cp storefront-repo-template/. storefront-repo-template-test -a
-          ls && pwd
+          pwd && ls
           cd storefront-repo-template-test
-          ls && pwd
+          pwd && ls
           git add .
           set +e
           git status | grep modified
