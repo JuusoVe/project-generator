@@ -18,6 +18,7 @@ jobs:
           cp -r storefront-repo-template/. storefront-repo-template-test
           cd storefront-repo-template-test
           git add .
+          git status
           set +e
           git status | grep modified
           if [ $? -eq 0 ]
