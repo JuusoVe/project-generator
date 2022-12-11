@@ -7,7 +7,7 @@ on:
 
 jobs:
   push-template-to-test-repo:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - run: |
@@ -15,8 +15,8 @@ jobs:
           git config --global user.email "${{ secrets.BOT_EMAIL }}"
           git config --global credential.helper cache
           git clone https://${{secrets.ACCESS_TOKEN}}@github.com/JuusoVe/storefront-repo-template-test
-          cp storefront-repo-template clonedTemplate -r
-          cd clonedTemplate
+          cp storefront-repo-template storefront-repo-template-test -r
+          cd storefront-repo-template-test
           git add .
           git commit -m "Triggered by generator [bot]. Original message: ${{ github.event.head_commit.message }}"
           git push
