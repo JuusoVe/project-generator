@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          storefront-repo-template
+          cd storefront-repo-template
           git config --global user.name "generator [bot]"
           git config --global user.email "${{ secrets.BOT_EMAIL }}"
           git config --global credential.helper cache
