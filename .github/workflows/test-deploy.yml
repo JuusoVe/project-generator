@@ -42,3 +42,4 @@ jobs:
                   TEMPLATE_REPO_NAME: ${{secrets.TEST_TEMPLATE_REPO_NAME}}
                   TARGET_REPO_OWNER: ${{secrets.TEST_TARGET_REPO_OWNER}}
                   USER_GITHUB_ACCESS_KEY: ${{secrets.TEST_USER_GITHUB_ACCESS_KEY}}
+                  USER_VERCEL_TOKEN: ${{secrets.TEST_USER_VERCEL_TOKEN}}
