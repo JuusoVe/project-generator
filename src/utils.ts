@@ -7,7 +7,7 @@ export const encryptSecret = async (publicKey: string, secretValue: string) => {
     const messageBytes = Buffer.from(secretValue)
     const keyBytes = Buffer.from(publicKey, 'base64')
 
-    // Encrypt using LibSodium.
+    // Encrypt using LibSodium
     const encryptedBytes = libsodium.crypto_box_seal(messageBytes, keyBytes)
 
     // Base64 the encrypted secret

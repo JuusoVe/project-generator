@@ -2,12 +2,6 @@
 
 The core repo containing the private code.
 
-# Core generator flow
-
-1. Validate keys
-2. Create a repo from template
-3.
-
 # Core generator pipeline
 
 -   Push changes to test storefront repo
@@ -42,6 +36,19 @@ Updated 6.12.2022
 # Settings up local development infra
 
 TODO
+
+# Wrapping your head around all the repos
+
+-   This repo is referred to as **generator_repo**
+-   The template from which we generate customer repos are referred to as **template_repo**
+-   The customer repos created programatically are referred to as **target_repo**
+
+No repository should be referred to without specifying the type as one of these.
+Each repo type will also have test copies associated with it. in this case the type is
+prepended with **test\_** ie:
+
+**TEMPLATE_REPO_NAME** env variable specifys that this is the name of the repo to which
+we push the template code. If we were to store a test-specific value for this env to be used in we would specify that by naming the secret **TEST_TEMPLATE_REPO_NAME** and then load it into a environment key without the **TEST\_** prefix
 
 # Production environment infra
 
