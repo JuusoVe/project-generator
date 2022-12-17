@@ -19,7 +19,7 @@ jobs:
                   git remote -v
                   cp -r ./storefront-template/. storefront-template-test
                   cd storefront-template-test
-                  git remote add https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-test-template
+                  git remote add origin https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-test-template
                   git remote -v
                   git add .
                   set +e
