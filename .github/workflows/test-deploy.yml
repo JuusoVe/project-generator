@@ -29,7 +29,7 @@ jobs:
                     git remote -v
                     set -e
                     git commit -m "Triggered by generator [bot]."
-                    
+                    git push
                   else
                     set -e
                     echo "No changes detected in template."
