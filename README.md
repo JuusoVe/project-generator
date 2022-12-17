@@ -45,7 +45,7 @@ Each repo type will also have test copies associated with it. in this case the t
 prepended with **test\_** ie:
 
 **TEMPLATE_REPO_NAME** env variable specifys that this is the name of the repo to which
-we push the template code. If we were to store a test-specific value for this env to be used in we would specify that by naming the secret **TEST_TEMPLATE_REPO_NAME** and then load it into a environment key without the **TEST\_** prefix
+we push the template code. If we were to store a test-specific secret for this env we would specify that by naming the secret **TEST_TEMPLATE_REPO_NAME** and then load it into a environment key without the **TEST\_** prefix
 
 # Production environment infra
 
