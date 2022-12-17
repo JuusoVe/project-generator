@@ -3,7 +3,5 @@
     "verbose": true,
     "preset": "ts-jest",
     "testTimeout": 5000,
-    "setupFiles": [
-        "dotenv/config"
-    ]
+    "setupFiles": ["dotenv/config"]
 }
