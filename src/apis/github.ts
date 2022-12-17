@@ -1,8 +1,9 @@
 import { Octokit } from '@octokit/rest'
 import { Endpoints } from '@octokit/types'
+import { REQUIRED_ENVS } from '..'
 
 const githubAPIClient = new Octokit({
-    auth: process.env.GITHUB_ACCESS_KEY,
+    auth: process.env[REQUIRED_ENVS.userGitHubAccessKey],
     userAgent: 'coreGenerator',
 })
 
