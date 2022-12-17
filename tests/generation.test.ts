@@ -10,7 +10,7 @@ const TARGET_FRONTEND_PROJECT_NAME = 'test-frontend-project'
 const VERCEL_TOKEN_SECRET_ENV_NAME = 'VERCEL_TOKEN'
 const VERCEL_PROJECT_ID_SECRET_ENV_NAME = 'VERCEL_PROJECT_ID'
 
-// try catches allow us to clean up other resources even if something fails
+// try-catches allow us to clean up other resources even if something fails
 afterAll(async () => {
     const errors: unknown[] = []
     try {

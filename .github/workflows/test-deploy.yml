@@ -15,7 +15,7 @@ jobs:
                   git config --global user.email "${{ secrets.PIPELINE_GIT_EMAIL }}"
                   git config --global credential.helper cache
                   git clone https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-test-template
-                  cp -r storefront-template/. storefront-template-test
+                  cp -r ./storefront-template/. storefront-template-test
                   cd storefront-template-test
                   git add .
                   set +e
