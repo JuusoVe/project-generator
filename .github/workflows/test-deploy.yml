@@ -29,3 +29,11 @@ jobs:
             set -e
             echo "No changes detected in template."
           fi
+  run-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          npm ci
+          npm test
+
