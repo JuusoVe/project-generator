@@ -7,6 +7,7 @@ on:
 
 jobs:
     push-template-to-test-repo:
+        name: Push to test template repo
         runs-on: ubuntu-22.04
         steps:
             - uses: actions/checkout@v3
