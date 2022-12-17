@@ -19,7 +19,6 @@ jobs:
                   git remote -v
                   cp -r ./storefront-template/. storefront-template-test
                   cd storefront-template-test
-                  git remote add origin https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-test-template
                   git remote -v
                   git add .
                   set +e
@@ -34,17 +33,17 @@ jobs:
                     set -e
                     echo "No changes detected in template."
                   fi
-    run-tests:
-        needs: push-template-to-test-repo
-        runs-on: ubuntu-22.04
-        steps:
-            - uses: actions/checkout@v3
-            - run: |
-                  npm ci
-                  npm test
-              env:
-                  TEMPLATE_REPO_OWNER: ${{secrets.TEST_TEMPLATE_REPO_OWNER}}
-                  TEMPLATE_REPO_NAME: ${{secrets.TEST_TEMPLATE_REPO_NAME}}
-                  TARGET_REPO_OWNER: ${{secrets.TEST_TARGET_REPO_OWNER}}
-                  USER_GITHUB_ACCESS_KEY: ${{secrets.TEST_USER_GITHUB_ACCESS_KEY}}
-                  USER_VERCEL_TOKEN: ${{secrets.TEST_USER_VERCEL_TOKEN}}
+    # run-tests:
+    #     needs: push-template-to-test-repo
+    #     runs-on: ubuntu-22.04
+    #     steps:
+    #         - uses: actions/checkout@v3
+    #         - run: |
+    #               npm ci
+    #               npm test
+    #           env:
+    #               TEMPLATE_REPO_OWNER: ${{secrets.TEST_TEMPLATE_REPO_OWNER}}
+    #               TEMPLATE_REPO_NAME: ${{secrets.TEST_TEMPLATE_REPO_NAME}}
+    #               TARGET_REPO_OWNER: ${{secrets.TEST_TARGET_REPO_OWNER}}
+    #               USER_GITHUB_ACCESS_KEY: ${{secrets.TEST_USER_GITHUB_ACCESS_KEY}}
+    #               USER_VERCEL_TOKEN: ${{secrets.TEST_USER_VERCEL_TOKEN}}
