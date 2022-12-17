@@ -71,5 +71,3 @@ test('can set vercel token secret to repo', async () => {
         })
     expect(createSecretResponse.statusCode).toBe(200)
 })
-
-// test('can deploy to vercel from repo', async () => {})
