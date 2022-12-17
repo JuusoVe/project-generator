@@ -20,7 +20,7 @@ jobs:
                   git remote set-url origin https://${{secrets.PIPELINE_GIT_ACCESS_TOKEN}}@github.com/JuusoVe/storefront-test-template
                   cp -r ./storefront-template/. storefront-template-test
                   cd storefront-template-test
-                  git remote -v
+                  git status
                   git add .
                   set +e
                   git status | grep -e modified -e new 
