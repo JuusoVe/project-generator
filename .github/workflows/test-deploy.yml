@@ -29,17 +29,17 @@ jobs:
                     set -e
                     echo "No changes detected in template."
                   fi
-    run-tests:
-        needs: push-template-to-test-repo
-        runs-on: ubuntu-22.04
-        steps:
-            - uses: actions/checkout@v3
-            - run: |
-                  npm ci
-                  npm test
-              env:
-                  TEMPLATE_REPO_OWNER: ${{secrets.TEST_TEMPLATE_REPO_OWNER}}
-                  TEMPLATE_REPO_NAME: ${{secrets.TEST_TEMPLATE_REPO_NAME}}
-                  TARGET_REPO_OWNER: ${{secrets.TEST_TARGET_REPO_OWNER}}
-                  USER_GITHUB_ACCESS_KEY: ${{secrets.TEST_USER_GITHUB_ACCESS_KEY}}
-                  USER_VERCEL_TOKEN: ${{secrets.TEST_USER_VERCEL_TOKEN}}
+    # run-tests:
+    #     needs: push-template-to-test-repo
+    #     runs-on: ubuntu-22.04
+    #     steps:
+    #         - uses: actions/checkout@v3
+    #         - run: |
+    #               npm ci
+    #               npm test
+    #           env:
+    #               TEMPLATE_REPO_OWNER: ${{secrets.TEST_TEMPLATE_REPO_OWNER}}
+    #               TEMPLATE_REPO_NAME: ${{secrets.TEST_TEMPLATE_REPO_NAME}}
+    #               TARGET_REPO_OWNER: ${{secrets.TEST_TARGET_REPO_OWNER}}
+    #               USER_GITHUB_ACCESS_KEY: ${{secrets.TEST_USER_GITHUB_ACCESS_KEY}}
+    #               USER_VERCEL_TOKEN: ${{secrets.TEST_USER_VERCEL_TOKEN}}
