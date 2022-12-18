@@ -1,3 +1,4 @@
+import { create } from 'domain'
 import { Router } from 'express'
 import vercelAPIClient from '../apis/vercel'
 
@@ -7,8 +8,10 @@ const router = Router()
 
 router.post(FRONTENDS_VERCEL_PROJECT_PATH, async (req, res) => {
     const { projectName } = req.body
-    await vercelAPIClient.createProject(projectName)
-    res.json('OK.')
+    const createProjectResponse = await vercelAPIClient.createProject(
+        projectName
+    )
+    res.json(createProjectResponse)
 })
 
 router.delete(FRONTENDS_VERCEL_PROJECT_PATH, async (req, res) => {

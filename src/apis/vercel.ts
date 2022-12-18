@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { REQUIRED_ENVS } from '..'
+import { VercelCreateProjectResponse } from '../types/vercel'
 
 const VERCEL_BASE_URL = 'https://api.vercel.com'
 const VERCEL_PROJECTS_PATH = '/v9/projects'
@@ -13,7 +14,7 @@ const client = axios.create({
 /**
  * Example response:
  * {
- *    accountId: 'YnKlK6VH1mgFOpfRodAB7dTH',
+ *    accountId: 'asdQWEadaWDAWeqwe',
  *    autoExposeSystemEnvs: true,
  *    buildCommand: null,
  *    createdAt: 1671359736888,
@@ -21,7 +22,7 @@ const client = axios.create({
  *    directoryListing: false,
  *    framework: null,
  *    gitForkProtection: true,
- *    id: 'prj_Xn3mWA0L5I03QXHT30CuvCm9H4dQ',
+ *    id: 'prj_asdqweqwfwaewqe',
  *    installCommand: null,
  *    name: 'test-frontend-project',
  *    nodeVersion: '18.x',
@@ -35,24 +36,23 @@ const client = axios.create({
  *    latestDeployments: [],
  *    targets: {}
  * }
+ *
  * TODO: We can define the start/build commands, node versions etc
  * directly here when creating.
  */
 const createProject = async (projectName: string) => {
-    const createVercelProjectResponse = await client.post(
-        VERCEL_PROJECTS_PATH,
-        { name: projectName }
-    )
-    console.log(createVercelProjectResponse.data)
-
-    return createVercelProjectResponse
+    const createVercelProjectResponse =
+        await client.post<VercelCreateProjectResponse>(VERCEL_PROJECTS_PATH, {
+            name: projectName,
+        })
+    return createVercelProjectResponse.data
 }
 
 const deleteProject = async (projectName: string) => {
     const deleteVercelProjectResponse = await client.delete(
         VERCEL_PROJECTS_PATH + '/' + projectName
     )
-    return deleteVercelProjectResponse
+    return deleteVercelProjectResponse.data
 }
 
 export default {

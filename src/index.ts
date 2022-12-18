@@ -6,7 +6,6 @@ export const REQUIRED_ENVS = {
     targetRepoOwner: 'TARGET_REPO_OWNER',
     userGitHubAccessKey: 'USER_GITHUB_ACCESS_KEY',
     userVercelToken: 'USER_VERCEL_TOKEN',
-    userVercelOrgName: 'USER_VERCEL_ORG_NAME',
 }
 
 checkRequiredEnvs(REQUIRED_ENVS, process.env)
