@@ -3,8 +3,9 @@ env:
     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
     push:
-        branches-ignore:
-            - main
+    repository_dispatch:
+        types: [manually-trigger-pipeline]
+
 jobs:
     Deploy-Preview:
         runs-on: ubuntu-22.04
