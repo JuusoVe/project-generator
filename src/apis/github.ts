@@ -55,9 +55,35 @@ const createRepoSecret = async (
     })
 }
 
+/**
+ * This sends an event similar to manually triggering a pipeline from the GUI.
+ * The pipeline configuration must allow manual triggers by defining the
+ * repository_dispatch event in the triggers ie:
+ *
+ * ./github/workflows/example.yml
+ *
+ * on:
+ *  repository_dispatch:
+ *      types: [manually-trigger-pipeline]
+ *
+ *  The types filter is optional but highly recommended to avoid accidental triggers.
+ */
+const triggerRepositoryPipeline = async (
+    username: string,
+    repoName: string,
+    eventType: string
+) => {
+    return await githubAPIClient.rest.repos.createDispatchEvent({
+        owner: username,
+        repo: repoName,
+        event_type: eventType,
+    })
+}
+
 export default {
     createRepoFromTemplate,
     deleteUserRepo,
     getRepoPublicEncryptionKey,
     createRepoSecret,
+    triggerRepositoryPipeline,
 }

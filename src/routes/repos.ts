@@ -5,6 +5,7 @@ import { encryptSecret } from '../utils'
 
 export const REPOS_GITHUB_PATH = '/repos/github'
 export const SECRETS_PATH = '/secrets'
+export const TRIGGER_PIPELINE_PATH = '/trigger-pipeline'
 
 const {
     [REQUIRED_ENVS.templateRepoOwner]: templateRepoOwner,
@@ -46,6 +47,17 @@ router.delete(REPOS_GITHUB_PATH, async (req, res) => {
         repoName
     )
     res.json(deleteRepoResponse.data)
+})
+
+router.post(REPOS_GITHUB_PATH + TRIGGER_PIPELINE_PATH, async (req, res) => {
+    const { username, repoName, eventType } = req.body
+    const triggerRepositoryPipelineResponse =
+        await githubAPIClient.triggerRepositoryPipeline(
+            username,
+            repoName,
+            eventType
+        )
+    res.json(triggerRepositoryPipelineResponse.data)
 })
 
 export default router

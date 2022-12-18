@@ -21,7 +21,7 @@ jobs:
                   cd storefront-test-template
                   git add .
                   set +e
-                  git status | grep -e modified -e new 
+                  git status | grep -e modified -e new
                   if [ $? -eq 0 ]
                   then
                     set -e
@@ -31,6 +31,7 @@ jobs:
                     set -e
                     echo "No changes detected in template."
                   fi
+
     run-tests:
         needs: push-template-to-test-repo
         runs-on: ubuntu-22.04
