@@ -5,6 +5,11 @@ import { VercelCreateProjectResponse } from '../types/vercel'
 const VERCEL_BASE_URL = 'https://api.vercel.com'
 const VERCEL_PROJECTS_PATH = '/v9/projects'
 
+const VERCEL_NEXT_PROJECT_CONFIG = {
+    framework: 'nextjs',
+    publicSource: false,
+}
+
 const client = axios.create({
     baseURL: VERCEL_BASE_URL,
     headers: {
@@ -44,6 +49,7 @@ const createProject = async (projectName: string) => {
     const createVercelProjectResponse =
         await client.post<VercelCreateProjectResponse>(VERCEL_PROJECTS_PATH, {
             name: projectName,
+            ...VERCEL_NEXT_PROJECT_CONFIG,
         })
     return createVercelProjectResponse.data
 }

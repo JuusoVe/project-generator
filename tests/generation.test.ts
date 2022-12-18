@@ -73,7 +73,7 @@ test('can set vercel token secret to repo', async () => {
     expect(createSecretResponse.statusCode).toBe(200)
 })
 
-test('can trigger a workflow in the repo', async () => {
+test.only('can trigger a workflow in the repo', async () => {
     const triggerRepositoryPipelineResponse = await request(app)
         .post(REPOS_GITHUB_PATH + TRIGGER_PIPELINE_PATH)
         .send({
@@ -81,31 +81,30 @@ test('can trigger a workflow in the repo', async () => {
             repoName: TARGET_REPO_NAME,
             eventType: TRIGGER_PIPELINE_EVENT_NAME,
         })
-    console.log(triggerRepositoryPipelineResponse.body)
     expect(triggerRepositoryPipelineResponse.statusCode).toBe(200)
 })
 
 // try-catches allow us to clean up other resources even if something fails
 afterAll(async () => {
-    const errors: unknown[] = []
-    try {
-        const deleteRepoResponse = await request(app)
-            .delete(REPOS_GITHUB_PATH)
-            .send({ username: targetRepoOwner, repoName: TARGET_REPO_NAME })
-        expect(deleteRepoResponse.statusCode).toBe(200)
-    } catch (err) {
-        errors.push(err)
-    }
-    try {
-        const deleteFrontendProjectResponse = await request(app)
-            .delete(FRONTENDS_VERCEL_PROJECT_PATH)
-            .send({ projectName: TARGET_FRONTEND_PROJECT_NAME })
-        expect(deleteFrontendProjectResponse.statusCode).toBe(200)
-    } catch (err) {
-        errors.push(err)
-    }
-    if (errors.length) {
-        const [firstError] = errors
-        throw firstError
-    }
+    // const errors: unknown[] = []
+    // try {
+    //     const deleteRepoResponse = await request(app)
+    //         .delete(REPOS_GITHUB_PATH)
+    //         .send({ username: targetRepoOwner, repoName: TARGET_REPO_NAME })
+    //     expect(deleteRepoResponse.statusCode).toBe(200)
+    // } catch (err) {
+    //     errors.push(err)
+    // }
+    // try {
+    //     const deleteFrontendProjectResponse = await request(app)
+    //         .delete(FRONTENDS_VERCEL_PROJECT_PATH)
+    //         .send({ projectName: TARGET_FRONTEND_PROJECT_NAME })
+    //     expect(deleteFrontendProjectResponse.statusCode).toBe(200)
+    // } catch (err) {
+    //     errors.push(err)
+    // }
+    // if (errors.length) {
+    //     const [firstError] = errors
+    //     throw firstError
+    // }
 })
