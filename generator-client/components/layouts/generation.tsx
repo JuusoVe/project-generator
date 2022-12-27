@@ -1,14 +1,15 @@
-import WorkflowStepper from '../WorkflowStepper'
-import BasicLayout from './basic'
+import WorkflowStepper from '../WorkflowStepper';
+import BasicLayout from './basic';
 
-export default function Layout({ children }) {
-  return (
-    <>
-        <BasicLayout>
-            <WorkflowStepper />
-
-            <main>{children}</main>
-</BasicLayout>
-    </>
-  )
+export default function GenerationLayout({
+    children,
+}: React.PropsWithChildren<{}>) {
+    return (
+        <>
+            <BasicLayout>
+                <WorkflowStepper />
+                <main>{children}</main>
+            </BasicLayout>
+        </>
+    );
 }
