@@ -6,6 +6,7 @@ import { encryptSecret } from '../utils'
 export const REPOS_GITHUB_PATH = '/repos/github'
 export const SECRETS_PATH = '/secrets'
 export const TRIGGER_PIPELINE_PATH = '/trigger-pipeline'
+export const WORKSFLOWS_PATH = '/workflow'
 
 const {
     [REQUIRED_ENVS.templateRepoOwner]: templateRepoOwner,
@@ -58,6 +59,12 @@ router.post(REPOS_GITHUB_PATH + TRIGGER_PIPELINE_PATH, async (req, res) => {
             eventType
         )
     res.json(triggerRepositoryPipelineResponse.data)
+})
+
+router.get(REPOS_GITHUB_PATH + WORKSFLOWS_PATH, async (req, res) => {
+    const { username, repoName } = req.body
+    const workflowRuns = await githubAPIClient.listWorkflows(username, repoName)
+    res.json(workflowRuns.data)
 })
 
 export default router

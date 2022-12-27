@@ -80,10 +80,18 @@ const triggerRepositoryPipeline = async (
     })
 }
 
+const listWorkflows = async (username: string, repo: string) => {
+    return await githubAPIClient.rest.actions.listRepoWorkflows({
+        owner: username,
+        repo: repo,
+    })
+}
+
 export default {
     createRepoFromTemplate,
     deleteUserRepo,
     getRepoPublicEncryptionKey,
     createRepoSecret,
     triggerRepositoryPipeline,
+    listWorkflows,
 }

@@ -6,6 +6,7 @@ import {
     REPOS_GITHUB_PATH,
     SECRETS_PATH,
     TRIGGER_PIPELINE_PATH,
+    WORKSFLOWS_PATH,
 } from '../src/routes/repos'
 
 const targetRepoOwner = process.env[REQUIRED_ENVS.targetRepoOwner]
@@ -16,7 +17,7 @@ const VERCEL_PROJECT_ID_SECRET_ENV_NAME = 'VERCEL_PROJECT_ID'
 const VERCEL_ORG_ID_SECRET_ENV_NAME = 'VERCEL_ORG_ID'
 const TRIGGER_PIPELINE_EVENT_NAME = 'manually-trigger-pipeline'
 
-// These are set in create project step
+// These are set in create vercel project step
 let CREATED_VERCEL_PROJECT_ID: string
 let CREATED_VERCEL_PROJECT_ORG_ID: string
 
@@ -82,6 +83,17 @@ test('can trigger a workflow in the repo', async () => {
             eventType: TRIGGER_PIPELINE_EVENT_NAME,
         })
     expect(triggerRepositoryPipelineResponse.statusCode).toBe(200)
+})
+
+test('can poll for target repo pipeline result', async () => {
+    const repositoryWorkflows = await request(app)
+        .get(REPOS_GITHUB_PATH + WORKSFLOWS_PATH)
+        .send({
+            username: targetRepoOwner,
+            repoName: TARGET_REPO_NAME,
+        })
+
+    console.log(repositoryWorkflows.body)
 })
 
 // try-catches allow us to clean up other resources even if something fails

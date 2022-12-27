@@ -33,6 +33,7 @@ jobs:
                   fi
 
     run-tests:
+        name: Run tests against test template repo
         needs: push-template-to-test-repo
         runs-on: ubuntu-22.04
         steps:
