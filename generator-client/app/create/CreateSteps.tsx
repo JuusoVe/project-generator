@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -64,14 +66,14 @@ const ColorlibStepIconRoot = styled('div')<{
     }),
 }));
 
-interface GeneratorStep {
+interface CreateStep {
     label: string;
     icon: React.ReactElement;
     name: string;
     complete: () => boolean;
 }
 
-const stepsNew: GeneratorStep[] = [
+const stepsNew: CreateStep[] = [
     {
         label: 'Project preferences',
         icon: <SettingsIcon />,
@@ -114,14 +116,14 @@ const ColorlibStepIcon = (props: StepIconProps) => {
 const APP_PREFIX = '/app/';
 
 const WorkflowStepper = () => {
-    const router = useRouter();
+    // const router = useRouter();
 
     const getActiveStep = () => {
-        const activeStep = stepsNew.findIndex(
-            ({ name }) => APP_PREFIX + name === router.pathname
-        );
-
-        return activeStep >= 0 ? activeStep : 0;
+        // const activeStep = stepsNew.findIndex(
+        //     ({ name }) => APP_PREFIX + name === router.pathname
+        // );
+        // return activeStep >= 0 ? activeStep : 0;
+        return 1;
     };
 
     return (
@@ -132,10 +134,7 @@ const WorkflowStepper = () => {
                 connector={<ColorlibConnector />}
             >
                 {stepsNew.map(({ label, name }, index) => (
-                    <Step
-                        key={index}
-                        onClick={() => router.push(APP_PREFIX + name)}
-                    >
+                    <Step key={index} onClick={() => console.log('stuff')}>
                         <StepLabel StepIconComponent={ColorlibStepIcon}>
                             {label}
                         </StepLabel>

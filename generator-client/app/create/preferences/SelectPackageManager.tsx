@@ -1,11 +1,8 @@
-import {
-    FormControl,
-    FormLabel,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-} from '@mui/material';
-import { LocalStorage, useLocalStorage } from '../hooks';
+'use client';
+
+import { FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { useLocalStorage } from 'usehooks-ts';
+import { LocalStorageKeys } from '../../../models';
 
 export enum PackageManagers {
     npm = 'npm',
@@ -18,7 +15,7 @@ const TBA_SUFFIX = ' (TBA)';
 
 const SelectPackageManager = () => {
     const [_value, setValue] = useLocalStorage(
-        LocalStorage.packageManager,
+        LocalStorageKeys.packageManager,
         PackageManagers.npm as string
     );
 
