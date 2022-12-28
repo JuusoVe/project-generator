@@ -2,7 +2,7 @@
 
 import { FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useLocalStorage } from 'usehooks-ts';
-import { LocalStorageKeys } from '../../../models';
+import { LocalStorageKeys } from '../models';
 
 export enum PackageManagers {
     npm = 'npm',

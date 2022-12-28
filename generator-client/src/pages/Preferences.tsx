@@ -1,5 +1,3 @@
-'use client';
-
 import { FormControl } from '@mui/material';
 import RepoIdentifiers from './RepoIdentifiers';
 import SelectPackageManager from './SelectPackageManager';

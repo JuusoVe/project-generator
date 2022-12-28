@@ -1,13 +1,10 @@
-'use client';
-
 import { Stack } from '@mui/system';
-import WorkflowStepper from './CreateSteps';
+import { Outlet } from 'react-router-dom';
+import WorkflowStepper from '../components/CreateSteps';
 
-export default function GeneratorLayout({
-    children,
-}: React.PropsWithChildren<{}>) {
+export default function CreateLayout() {
     return (
-        <>
+        <div>
             <WorkflowStepper />
             <Stack
                 direction="column"
@@ -15,8 +12,8 @@ export default function GeneratorLayout({
                 alignItems="center"
                 spacing={2}
             >
-                {children}
+                <Outlet />
             </Stack>
-        </>
+        </div>
     );
 }

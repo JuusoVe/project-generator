@@ -1,13 +1,10 @@
-'use client';
-
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import SettingsIcon from '@mui/icons-material/Settings';
 import VideoLabelIcon from '@mui/icons-material/VideoLabel';
 import VpnKey from '@mui/icons-material/VpnKey';
-import { useRouter } from 'next/router';
 import {
-    Link,
+    // Link as LinkWrapper,
     Stack,
     Step,
     StepConnector,
@@ -16,6 +13,15 @@ import {
     StepLabel,
     Stepper,
 } from '@mui/material';
+import {
+    Navigate as RouterLink,
+    useHref,
+    useLocation,
+    useMatch,
+    useNavigate,
+    useResolvedPath,
+} from 'react-router-dom';
+import { routes } from '../constants';
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -66,34 +72,6 @@ const ColorlibStepIconRoot = styled('div')<{
     }),
 }));
 
-interface CreateStep {
-    label: string;
-    icon: React.ReactElement;
-    name: string;
-    complete: () => boolean;
-}
-
-const stepsNew: CreateStep[] = [
-    {
-        label: 'Project preferences',
-        icon: <SettingsIcon />,
-        name: 'preferences',
-        complete: () => true,
-    },
-    {
-        label: 'Set API keys',
-        icon: <VpnKey />,
-        name: 'keys',
-        complete: () => true,
-    },
-    {
-        label: 'Create the project',
-        icon: <VideoLabelIcon />,
-        name: 'create',
-        complete: () => false,
-    },
-];
-
 const ColorlibStepIcon = (props: StepIconProps) => {
     const { active, completed, className } = props;
 
@@ -113,28 +91,51 @@ const ColorlibStepIcon = (props: StepIconProps) => {
     );
 };
 
-const APP_PREFIX = '/app/';
+interface CreateStep {
+    label: string;
+    icon: React.ReactElement;
+    route: string;
+    complete: () => boolean;
+}
 
 const WorkflowStepper = () => {
-    // const router = useRouter();
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
-    const getActiveStep = () => {
-        // const activeStep = stepsNew.findIndex(
-        //     ({ name }) => APP_PREFIX + name === router.pathname
-        // );
-        // return activeStep >= 0 ? activeStep : 0;
-        return 1;
-    };
+    const steps: CreateStep[] = [
+        {
+            label: 'Project preferences',
+            icon: <SettingsIcon />,
+            route: routes.create.preferences,
+            complete: () => true,
+        },
+        {
+            label: 'Set API keys',
+            icon: <VpnKey />,
+            route: routes.create.keys,
+            complete: () => true,
+        },
+        {
+            label: 'Create the project',
+            icon: <VideoLabelIcon />,
+            route: routes.create.generate,
+            complete: () => false,
+        },
+    ];
+
+    const activeStep = steps.findIndex(({ route }) => {
+        return pathname === route;
+    });
 
     return (
         <Stack sx={{ width: '100%' }} spacing={4}>
             <Stepper
                 alternativeLabel
-                activeStep={getActiveStep()}
+                activeStep={activeStep}
                 connector={<ColorlibConnector />}
             >
-                {stepsNew.map(({ label, name }, index) => (
-                    <Step key={index} onClick={() => console.log('stuff')}>
+                {steps.map(({ label, route }, index) => (
+                    <Step key={index} onClick={() => navigate(route)}>
                         <StepLabel StepIconComponent={ColorlibStepIcon}>
                             {label}
                         </StepLabel>
