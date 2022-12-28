@@ -4,7 +4,7 @@ import InputRepoDetails from './InputRepoDetails';
 import SelectFrontend from './SelectFrontend';
 import SelectPackageManager from './SelectPackageManager';
 
-const PreferencesPage = () => {
+const PagePreferences = () => {
     return (
         <>
             <Typography variant="h2">Pick your flavors</Typography>
@@ -18,4 +18,4 @@ const PreferencesPage = () => {
     );
 };
 
-export default PreferencesPage;
+export default PagePreferences;

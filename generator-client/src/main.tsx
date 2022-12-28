@@ -5,14 +5,14 @@ import { ROUTES } from './constants';
 import CreateLayout from './layouts/create';
 import Generate from './components/PageGenerate';
 import Keys from './components/PageKeys';
-import PreferencesPage from './components/PagePreferences';
+import PagePreferences from './components/PagePreferences';
 
 const router = createBrowserRouter([
     {
         path: ROUTES.ROOT,
         element: <CreateLayout />,
         children: [
-            { path: ROUTES.CREATE.PREFERENCES, element: <PreferencesPage /> },
+            { path: ROUTES.CREATE.PREFERENCES, element: <PagePreferences /> },
             { path: ROUTES.CREATE.KEYS, element: <Keys /> },
             { path: ROUTES.CREATE.GENERATE, element: <Generate /> },
         ],

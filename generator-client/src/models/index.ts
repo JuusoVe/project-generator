@@ -7,3 +7,8 @@ export enum LocalStorageKeys {
     repoAPIKey = 'repoAPIKey',
     frontendAPIKey = 'frontendAPIKey',
 }
+
+export type VercelCreateProjectResponse = {
+    accountId: string;
+    id: string;
+};
