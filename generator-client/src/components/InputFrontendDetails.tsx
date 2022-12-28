@@ -2,11 +2,11 @@ import { FormLabel, Stack, TextField } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import { IDENTIFIERS } from '../constants';
-import { LocalStorageKeys } from '../models';
+import { StorageKeys } from '../models';
 
 const SelectPackageManager = () => {
     const [frontendProjectNameValue, setFrontendProjectNameValue] =
-        useLocalStorage(LocalStorageKeys.frontendProjectName, '');
+        useLocalStorage(StorageKeys.frontendProjectName, '');
 
     const updateFrontendProjectName = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

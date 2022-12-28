@@ -1,67 +1,63 @@
-import { Octokit as OctokitI } from '@octokit/rest';
 // @ts-ignore}
-import { Octokit } from 'https://cdn.skypack.dev/octokit';
+import axios from 'axios';
+import { Endpoints } from '@octokit/types';
+
+const GITHUB_BASE_URL = 'https://api.github.com';
+const REPO_PATH = '/repos';
+const TEMPLATE_REPO_OWNER = 'JuusoVe';
 
 export const useGithubAPI = (apiKey: string) => {
-    /**
-     * Using the actual client from '@octokit/rest' iN browser is not supported.
-     * We use it as an interface to type what we import from the CDN directly to
-     * browser.
-     *
-     * https://octokit.github.io/rest.js/v19
-     *
-     */
-    const clientI = new OctokitI();
-    const githubAPIClient = new Octokit({
-        auth: apiKey,
-        userAgent: 'generatorClient',
-    }) as typeof clientI;
+    const client = axios.create({
+        baseURL: GITHUB_BASE_URL,
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+        },
+    });
 
     const createRepoFromTemplate = async (
         newRepoName: string,
-        templateRepoName: string,
-        templateRepoOwner: string
+        templateRepoName: string
     ) => {
-        return await githubAPIClient.rest.repos.createUsingTemplate({
+        const createRepoResponse = await client.post<
+            Endpoints['POST /repos/{template_owner}/{template_repo}/generate']['response']
+        >(`${REPO_PATH}/${TEMPLATE_REPO_OWNER}/${templateRepoName}/generate`, {
             name: newRepoName,
-            template_repo: templateRepoName,
-            template_owner: templateRepoOwner,
-            private: true,
         });
+        return createRepoResponse.data;
     };
 
     const deleteUserRepo = async (username: string, repoName: string) => {
-        return await githubAPIClient.rest.repos.delete({
-            owner: username,
-            repo: repoName,
-        });
+        const deleteRepoResponse = await client.delete<
+            Endpoints['DELETE /repos/{owner}/{repo}']['response']
+        >(`${REPO_PATH}/${username}/${repoName}`);
+        return deleteRepoResponse.data;
     };
 
-    const getRepoPublicEncryptionKey = async (
-        username: string,
-        repoName: string
-    ) => {
-        return await githubAPIClient.rest.actions.getRepoPublicKey({
-            repo: repoName,
-            owner: username,
-        });
-    };
+    // const getRepoPublicEncryptionKey = async (
+    //     username: string,
+    //     repoName: string
+    // ) => {
+    //     return await githubAPIClient.rest.actions.getRepoPublicKey({
+    //         repo: repoName,
+    //         owner: username,
+    //     });
+    // };
 
-    const createRepoSecret = async (
-        username: string,
-        repoName: string,
-        secretName: string,
-        secretValue: string,
-        keyId: string
-    ) => {
-        return await githubAPIClient.rest.actions.createOrUpdateRepoSecret({
-            owner: username,
-            repo: repoName,
-            secret_name: secretName,
-            encrypted_value: secretValue,
-            key_id: keyId,
-        });
-    };
+    // const createRepoSecret = async (
+    //     username: string,
+    //     repoName: string,
+    //     secretName: string,
+    //     secretValue: string,
+    //     keyId: string
+    // ) => {
+    //     return await githubAPIClient.rest.actions.createOrUpdateRepoSecret({
+    //         owner: username,
+    //         repo: repoName,
+    //         secret_name: secretName,
+    //         encrypted_value: secretValue,
+    //         key_id: keyId,
+    //     });
+    // };
 
     /**
      * This sends an event similar to manually triggering a pipeline from the GUI.
@@ -76,31 +72,31 @@ export const useGithubAPI = (apiKey: string) => {
      *
      *  The types filter is optional but highly recommended to avoid accidental triggers.
      */
-    const triggerRepositoryPipeline = async (
-        username: string,
-        repoName: string,
-        eventType: string
-    ) => {
-        return await githubAPIClient.rest.repos.createDispatchEvent({
-            owner: username,
-            repo: repoName,
-            event_type: eventType,
-        });
-    };
+    // const triggerRepositoryPipeline = async (
+    //     username: string,
+    //     repoName: string,
+    //     eventType: string
+    // ) => {
+    //     return await githubAPIClient.rest.repos.createDispatchEvent({
+    //         owner: username,
+    //         repo: repoName,
+    //         event_type: eventType,
+    //     });
+    // };
 
-    const listWorkflows = async (username: string, repo: string) => {
-        return await githubAPIClient.rest.actions.listRepoWorkflows({
-            owner: username,
-            repo: repo,
-        });
-    };
+    // const listWorkflows = async (username: string, repo: string) => {
+    //     return await githubAPIClient.rest.actions.listRepoWorkflows({
+    //         owner: username,
+    //         repo: repo,
+    //     });
+    // };
 
     return {
         createRepoFromTemplate,
         deleteUserRepo,
-        getRepoPublicEncryptionKey,
-        createRepoSecret,
-        triggerRepositoryPipeline,
-        listWorkflows,
+        // getRepoPublicEncryptionKey,
+        // createRepoSecret,
+        // triggerRepositoryPipeline,
+        // listWorkflows,
     };
 };

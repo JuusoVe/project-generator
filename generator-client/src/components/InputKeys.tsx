@@ -2,22 +2,24 @@ import { FormLabel, TextField } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useSessionStorage } from 'usehooks-ts';
 import { IDENTIFIERS } from '../constants';
-import { LocalStorageKeys } from '../models';
+import { StorageKeys } from '../models';
 
 const SelectPackageManager = () => {
     const [repoAPIKeyValue, setRepoAPIKeyValue] = useSessionStorage(
-        LocalStorageKeys.repoAPIKey,
+        StorageKeys.repoAPIKey,
         ''
     );
 
     const updateRepoAPIKey = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
+        console.log('here');
+
         setRepoAPIKeyValue(event.target.value);
     };
 
     const [frontendAPIKeyValue, setFrontendAPIKeyValue] = useSessionStorage(
-        LocalStorageKeys.frontendAPIKey,
+        StorageKeys.frontendAPIKey,
         ''
     );
 
@@ -29,11 +31,9 @@ const SelectPackageManager = () => {
 
     return (
         <>
-            <FormLabel id={IDENTIFIERS.FRONTEND_API_KEY}>
-                Repository Details
-            </FormLabel>
+            <FormLabel>Repository Details</FormLabel>
             <TextField
-                id={IDENTIFIERS.FRONTEND_API_KEY}
+                id={IDENTIFIERS.REPO_API_KEY}
                 label="Repository API key"
                 variant="outlined"
                 required

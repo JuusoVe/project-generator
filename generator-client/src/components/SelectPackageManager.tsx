@@ -1,7 +1,7 @@
 import { FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useLocalStorage } from 'usehooks-ts';
 import { IDENTIFIERS, TBA_SUFFIX } from '../constants';
-import { LocalStorageKeys } from '../models';
+import { StorageKeys } from '../models';
 
 export enum PackageManagers {
     npm = 'npm',
@@ -10,7 +10,7 @@ export enum PackageManagers {
 
 const SelectPackageManager = () => {
     const [_value, setValue] = useLocalStorage(
-        LocalStorageKeys.packageManager,
+        StorageKeys.packageManager,
         PackageManagers.npm as string
     );
 

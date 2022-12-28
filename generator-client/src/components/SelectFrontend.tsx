@@ -1,7 +1,7 @@
 import { RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useLocalStorage } from 'usehooks-ts';
 import { IDENTIFIERS, TBA_SUFFIX } from '../constants';
-import { LocalStorageKeys } from '../models';
+import { StorageKeys } from '../models';
 
 export enum FrontEnds {
     vercel = 'vercel',
@@ -10,7 +10,7 @@ export enum FrontEnds {
 
 const SelectFrontend = () => {
     const [_value, setValue] = useLocalStorage(
-        LocalStorageKeys.frontendService,
+        StorageKeys.frontendService,
         FrontEnds.vercel as string
     );
 

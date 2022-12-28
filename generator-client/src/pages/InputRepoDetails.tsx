@@ -1,7 +1,7 @@
-import { FormLabel, TextField } from '@mui/material';
+import { FormLabel, Stack, TextField } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
-import { IDENTIFIERS } from '../constants';
+import { REPO_NAME_LABEL, REPO_OWNER_LABEL } from '../constants';
 import { StorageKeys } from '../models';
 
 const SelectPackageManager = () => {
@@ -28,10 +28,10 @@ const SelectPackageManager = () => {
     };
 
     return (
-        <>
-            <FormLabel id={IDENTIFIERS.REPO_NAME}>Repository Details</FormLabel>
+        <Stack spacing={4}>
+            <FormLabel id={REPO_NAME_LABEL}>Repository Details</FormLabel>
             <TextField
-                id={IDENTIFIERS.REPO_NAME}
+                id={REPO_NAME_LABEL}
                 label="Repository Name"
                 variant="outlined"
                 required
@@ -39,14 +39,14 @@ const SelectPackageManager = () => {
                 value={repoNameValue}
             />
             <TextField
-                id={IDENTIFIERS.REPO_OWNER}
+                id={REPO_OWNER_LABEL}
                 label="Repository Owner"
                 variant="outlined"
                 required
                 onChange={updateRepoOwner}
                 value={repoOwnerValue}
             />
-        </>
+        </Stack>
     );
 };
 

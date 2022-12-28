@@ -1,4 +1,4 @@
-export enum LocalStorageKeys {
+export enum StorageKeys {
     repoName = 'repoName',
     repoOwner = 'repoOwner',
     packageManager = 'packageManager',
