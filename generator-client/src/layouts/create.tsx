@@ -1,6 +1,7 @@
 import { Stack } from '@mui/system';
 import { Outlet } from 'react-router-dom';
 import WorkflowStepper from '../components/CreateSteps';
+import Destroy from '../components/Destroy';
 
 export default function CreateLayout() {
     return (
@@ -13,6 +14,7 @@ export default function CreateLayout() {
                 spacing={2}
             >
                 <Outlet />
+                <Destroy />
             </Stack>
         </div>
     );

@@ -1,12 +1,8 @@
-'use client';
-
-import { FormLabel, Stack, TextField } from '@mui/material';
+import { FormLabel, TextField } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
+import { IDENTIFIERS } from '../constants';
 import { LocalStorageKeys } from '../models';
-
-const REPO_NAME_LABEL = 'repository-name';
-const REPO_OWNER_LABEL = 'repository-owner';
 
 const SelectPackageManager = () => {
     const [repoNameValue, setRepoNameValue] = useLocalStorage(
@@ -32,10 +28,10 @@ const SelectPackageManager = () => {
     };
 
     return (
-        <Stack spacing={4}>
-            <FormLabel id={REPO_NAME_LABEL}>Repository Details</FormLabel>
+        <>
+            <FormLabel id={IDENTIFIERS.REPO_NAME}>Repository Details</FormLabel>
             <TextField
-                id={REPO_NAME_LABEL}
+                id={IDENTIFIERS.REPO_NAME}
                 label="Repository Name"
                 variant="outlined"
                 required
@@ -43,14 +39,14 @@ const SelectPackageManager = () => {
                 value={repoNameValue}
             />
             <TextField
-                id={REPO_OWNER_LABEL}
+                id={IDENTIFIERS.REPO_OWNER}
                 label="Repository Owner"
                 variant="outlined"
                 required
                 onChange={updateRepoOwner}
                 value={repoOwnerValue}
             />
-        </Stack>
+        </>
     );
 };
 
