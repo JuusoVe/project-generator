@@ -3,18 +3,32 @@ import { Stack } from '@mui/system';
 import axios from 'axios';
 import { useLocalStorage, useSessionStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
-import { StorageKeys } from '../models';
+import { useVercelAPI } from '../apis/vercel';
+import { StorageKeys, VercelCreateProjectResponse } from '../models';
 
-const DeleteResrouces = () => {
-    const [destroySuccess, setDestroySuccess] = useLocalStorage(
-        StorageKeys.destroySuccess,
+const DeleteResources = () => {
+    const [destroyRepoSuccess, setDestroyRepoSuccess] = useLocalStorage(
+        StorageKeys.destroyRepoSuccess,
         true
     );
-    const [destroyStatusText, setDestroyStatusText] = useLocalStorage(
-        StorageKeys.destroyStatusText,
+    const [destroyRepoStatusText, setDestroyRepoStatusText] = useLocalStorage(
+        StorageKeys.destroyRepoStatusText,
         ''
     );
-    const [apiKey, _setValue] = useSessionStorage(StorageKeys.repoAPIKey, '');
+    const [destroyFrontendSuccess, setDestroyFrontendSuccess] = useLocalStorage(
+        StorageKeys.destroyFrontendSuccess,
+        true
+    );
+    const [destroyFrontendStatusText, setDestroyFrontendStatusText] =
+        useLocalStorage(StorageKeys.destroyFrontendStatusText, '');
+    const [githubAPIKey, _setGithubAPIKeyValue] = useSessionStorage(
+        StorageKeys.repoAPIKey,
+        ''
+    );
+    const [frontendAPIKey, _setFrontendAPIKeyValue] = useSessionStorage(
+        StorageKeys.frontendAPIKey,
+        ''
+    );
     const [repoNameValue, _setRepoNameValue] = useLocalStorage(
         StorageKeys.repoName,
         ''
@@ -23,42 +37,64 @@ const DeleteResrouces = () => {
         StorageKeys.repoOwner,
         ''
     );
-    const githubAPI = useGithubAPI(apiKey);
-    const deleteRepository = async () => {
-        try {
-            const res = await githubAPI.deleteUserRepo(
-                repoOwnerValue,
-                repoNameValue
-            );
+    const [frontendNameValue, _setFrontendNameValue] = useLocalStorage(
+        StorageKeys.frontendProjectName,
+        ''
+    );
 
-            setDestroySuccess(true);
-            setDestroyStatusText('Successfully deleted repo.');
+    const githubAPI = useGithubAPI(githubAPIKey);
+    const vercelAPI = useVercelAPI(frontendAPIKey);
+    const deleteResources = async () => {
+        try {
+            await githubAPI.deleteUserRepo(repoOwnerValue, repoNameValue);
+            setDestroyRepoSuccess(true);
+            setDestroyRepoStatusText('Successfully deleted repo.');
         } catch (err) {
-            setDestroySuccess(false);
-            if (axios.isAxiosError(err)) {
-                setDestroyStatusText(
-                    `Destroy failed: ${
-                        err.response?.data?.message ?? err.message
-                    }`
-                );
-            } else {
-                setDestroyStatusText(
-                    `Destroy failed: Unable to parse message.`
-                );
-            }
+            setDestroyRepoSuccess(false);
+            setDestroyRepoStatusText(
+                `Repository delete failed: ${
+                    axios.isAxiosError(err)
+                        ? err.response?.data?.message ?? err.message
+                        : 'Unable to parse message.'
+                }`
+            );
+        }
+        try {
+            await vercelAPI.deleteProject(frontendNameValue);
+            setDestroyFrontendSuccess(true);
+            setDestroyFrontendStatusText('Successfully deleted frontend.');
+        } catch (err) {
+            setDestroyFrontendSuccess(false);
+            setDestroyFrontendStatusText(
+                `Frontend delete failed: ${
+                    axios.isAxiosError(err)
+                        ? err.response?.data?.message ?? err.message
+                        : 'Unable to parse message.'
+                }`
+            );
         }
     };
 
     return (
         <Stack>
             <Typography
-                variant="h4"
-                sx={{ color: destroySuccess ? 'primary.main' : 'error.main' }}
+                variant="h6"
+                sx={{
+                    color: destroyRepoSuccess ? 'primary.main' : 'error.main',
+                }}
             >
-                {destroyStatusText}
+                {destroyRepoStatusText}
             </Typography>
-            <Button onClick={deleteRepository}>Delete resources</Button>
+            <Typography
+                variant="h6"
+                sx={{
+                    color: destroyRepoSuccess ? 'primary.main' : 'error.main',
+                }}
+            >
+                {destroyFrontendStatusText}
+            </Typography>
+            <Button onClick={deleteResources}>Delete resources</Button>
         </Stack>
     );
 };
-export default DeleteResrouces;
+export default DeleteResources;

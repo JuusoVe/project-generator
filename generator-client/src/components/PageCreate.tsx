@@ -2,12 +2,13 @@ import { Button, Box } from '@mui/material';
 import axios, { AxiosResponse } from 'axios';
 import { useSessionStorage, useLocalStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
-import { StorageKeys } from '../models';
+import { StorageKeys, VercelCreateProjectResponse } from '../models';
 import DoneIcon from '@mui/icons-material/Done';
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useState } from 'react';
-import { TEMPLATE_NAME } from '../constants';
+import { IDS, TEMPLATE_NAME } from '../constants';
+import { useVercelAPI } from '../apis/vercel';
 
 enum CreateStepStatus {
     notStarted = 'not-started',
@@ -16,18 +17,11 @@ enum CreateStepStatus {
     failed = 'failed',
 }
 
-enum CreateStep {
-    createRepo = 'create-repo',
-    createFrontend = 'create-frontend',
-    createRepoSecrets = 'create-repo-secrets',
-    deployFrontend = 'deploy-frontend',
-}
-
 interface StepState {
     label: string;
     status: CreateStepStatus;
     statusMessage: string;
-    id: CreateStep;
+    id: string;
 }
 
 const getStatusIcon = (status: CreateStepStatus) => {
@@ -61,34 +55,50 @@ const initialCreateState: StepState[] = [
         label: 'Create repo',
         status: CreateStepStatus.notStarted,
         statusMessage: '',
-        id: CreateStep.createRepo,
+        id: IDS.STEPS.CREATE_REPO,
     },
     {
         label: 'Create frontend',
         status: CreateStepStatus.notStarted,
         statusMessage: '',
-        id: CreateStep.createFrontend,
+        id: IDS.STEPS.CREATE_FRONTEND,
     },
     {
         label: 'Set repo secrets',
         status: CreateStepStatus.notStarted,
         statusMessage: '',
-        id: CreateStep.createRepoSecrets,
+        id: IDS.STEPS.CREATE_REPO_SECRETS,
     },
     {
-        label: 'Deploying frontend',
+        label: 'Deploy frontend',
         status: CreateStepStatus.notStarted,
         statusMessage: '',
-        id: CreateStep.deployFrontend,
+        id: IDS.STEPS.DEPLOY_FRONTEND,
     },
 ];
 
 const PageCreate = () => {
-    const [apiKey, _setValue] = useSessionStorage(StorageKeys.repoAPIKey, '');
+    const [githubAPIKey, _setGithubAPIKeyValue] = useSessionStorage(
+        StorageKeys.repoAPIKey,
+        ''
+    );
+    const [vercelAPIKey, _setVercelAPIKeyValue] = useSessionStorage(
+        StorageKeys.repoAPIKey,
+        ''
+    );
     const [repoNameValue, _setRepoNameValue] = useLocalStorage(
         StorageKeys.repoName,
         ''
     );
+    const [frontendProjectName, _setFrontendProjectNameValue] = useLocalStorage(
+        StorageKeys.frontendProjectName,
+        ''
+    );
+    const [vercelCreateData, setVercelCreateData] =
+        useLocalStorage<VercelCreateProjectResponse>(
+            StorageKeys.vercelCreateData,
+            { id: '', accountId: '' }
+        );
     const [createState, setCreateState] = useLocalStorage<StepState[]>(
         StorageKeys.createState,
         initialCreateState
@@ -112,41 +122,70 @@ const PageCreate = () => {
         setCreateState(newState);
     };
 
-    const githubAPI = useGithubAPI(apiKey);
+    const githubAPI = useGithubAPI(githubAPIKey);
+    const vercelAPI = useVercelAPI(vercelAPIKey);
 
+    // API operations keyed by step ids
     const operations = {
-        [CreateStep.createRepo]: () =>
-            githubAPI.createRepoFromTemplate(repoNameValue, TEMPLATE_NAME),
-        [CreateStep.createFrontend]: () => {
-            githubAPI.createRepoFromTemplate(repoNameValue, 'stuff');
+        [IDS.STEPS.CREATE_REPO]: async () => {
+            return await githubAPI.createRepoFromTemplate(
+                repoNameValue,
+                TEMPLATE_NAME
+            );
         },
-        [CreateStep.createRepoSecrets]: () => {
-            githubAPI.createRepoFromTemplate(repoNameValue, 'stuff');
+        [IDS.STEPS.CREATE_FRONTEND]: async () => {
+            return await vercelAPI.createProject(frontendProjectName);
         },
-        [CreateStep.deployFrontend]: () => {
-            githubAPI.createRepoFromTemplate(repoNameValue, 'stuff');
+        [IDS.STEPS.CREATE_REPO_SECRETS]: async () => {
+            return await githubAPI.createRepoFromTemplate(
+                repoNameValue,
+                'stuff'
+            );
+        },
+        [IDS.STEPS.DEPLOY_FRONTEND]: async () => {
+            return await githubAPI.createRepoFromTemplate(
+                repoNameValue,
+                'stuff'
+            );
         },
     };
 
-    const executeStep = async (step: CreateStep) => {
+    // Execution wrapper to dry up handling responses
+    const executeStep = async (step: string) => {
         try {
             updateCreateState(step, CreateStepStatus.inProgress);
-            await operations[step]();
-            updateCreateState(
-                CreateStep.createRepo,
-                CreateStepStatus.completed
-            );
+            const res = await operations[step]();
+            updateCreateState(step, CreateStepStatus.completed);
+            return res;
         } catch (err) {
             const failMessage = axios.isAxiosError(err)
-                ? err.response?.data.message ?? err.message
+                ? err.response?.data?.message ?? err.message
                 : `Operation failed: Unable to parse message.`;
-
             updateCreateState(step, CreateStepStatus.failed, failMessage);
         }
     };
 
+    // Orchestrate project creation.
     const createProject = async () => {
-        await executeStep(CreateStep.createRepo);
+        // Run repo creation and frontend creation in parallel
+        await Promise.all([
+            await executeStep(IDS.STEPS.CREATE_REPO),
+            async () => {
+                const frontendCreateRes = await executeStep(
+                    IDS.STEPS.CREATE_FRONTEND
+                );
+                if (frontendCreateRes) {
+                    setVercelCreateData(
+                        frontendCreateRes.data as VercelCreateProjectResponse
+                    );
+                }
+            },
+        ]);
+    };
+
+    const resetCreation = async () => {
+        // TODO: Check in progress and prompt
+        setCreateState(initialCreateState);
     };
 
     return (
@@ -173,6 +212,7 @@ const PageCreate = () => {
                     );
                 })}
             </Box>
+            <Button onClick={resetCreation}>Reset creation</Button>
         </>
     );
 };

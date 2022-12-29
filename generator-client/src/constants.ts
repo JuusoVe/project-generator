@@ -15,6 +15,12 @@ export const IDS = {
     REPO_OWNER_INPUT: 'repository-owner-input',
     REPO_API_KEY_INPUT: 'repostiroy-api-key-input',
     FRONTEND_API_KEY_INPUT: 'frontend-api-key-input',
+    STEPS: {
+        CREATE_REPO: 'create-repo',
+        CREATE_FRONTEND: 'create-frontend',
+        CREATE_REPO_SECRETS: 'create-repo-secrets',
+        DEPLOY_FRONTEND: 'deploy-frontend',
+    },
 };
 
 export const TBA_SUFFIX = ' (TBA)';

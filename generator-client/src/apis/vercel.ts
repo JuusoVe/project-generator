@@ -13,7 +13,9 @@ export const useVercelAPI = (apiKey: string) => {
     const client = axios.create({
         baseURL: VERCEL_BASE_URL,
         headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer ${
+                apiKey ? apiKey : import.meta.env.VITE_TEST_VERCEL_TOKEN
+            }`,
         },
     });
     /**
@@ -54,14 +56,14 @@ export const useVercelAPI = (apiKey: string) => {
                     ...VERCEL_NEXT_PROJECT_CONFIG,
                 }
             );
-        return createVercelProjectResponse.data;
+        return createVercelProjectResponse;
     };
 
     const deleteProject = async (projectName: string) => {
         const deleteVercelProjectResponse = await client.delete(
             VERCEL_PROJECTS_PATH + '/' + projectName
         );
-        return deleteVercelProjectResponse.data;
+        return deleteVercelProjectResponse;
     };
 
     return {

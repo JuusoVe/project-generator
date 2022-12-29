@@ -10,7 +10,9 @@ export const useGithubAPI = (apiKey: string) => {
     const client = axios.create({
         baseURL: GITHUB_BASE_URL,
         headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer ${
+                apiKey ? apiKey : import.meta.env.VITE_TEST_GH_TOKEN
+            }`,
         },
     });
 
@@ -37,6 +39,7 @@ export const useGithubAPI = (apiKey: string) => {
     //     username: string,
     //     repoName: string
     // ) => {
+
     //     return await githubAPIClient.rest.actions.getRepoPublicKey({
     //         repo: repoName,
     //         owner: username,

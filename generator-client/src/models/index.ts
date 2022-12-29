@@ -1,14 +1,20 @@
 export enum StorageKeys {
+    // PREFERENCES
     repoName = 'repoName',
     repoOwner = 'repoOwner',
     packageManager = 'packageManager',
     frontendService = 'frontendService',
     frontendProjectName = 'frontendProjectName',
+    // API KEYS
     repoAPIKey = 'repoAPIKey',
     frontendAPIKey = 'frontendAPIKey',
-    destroySuccess = 'destroySuccess',
-    destroyStatusText = 'destroyStatusText',
+    // WORKFLOW STATE
+    destroyRepoSuccess = 'destroyRepoSuccess',
+    destroyRepoStatusText = 'destroyRepoStatusText',
+    destroyFrontendSuccess = 'destroyFrontendSuccess',
+    destroyFrontendStatusText = 'destroyFrontendStatusText',
     createState = 'createState',
+    vercelCreateData = 'vercelCreateData',
 }
 
 export type VercelCreateProjectResponse = {
