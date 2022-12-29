@@ -1,21 +1,23 @@
 import { Stack } from '@mui/system';
 import { Outlet } from 'react-router-dom';
-import WorkflowStepper from '../components/CreateSteps';
-import Destroy from '../components/Destroy';
+import WorkflowStepper from '../components/WorkflowStepper';
+import Destroy from '../components/DeleteResources';
+import { Container } from '@mui/material';
 
 export default function CreateLayout() {
     return (
-        <div>
-            <WorkflowStepper />
+        <Container>
             <Stack
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
-                spacing={2}
+                spacing={12}
             >
+                <WorkflowStepper />
+
                 <Outlet />
                 <Destroy />
             </Stack>
-        </div>
+        </Container>
     );
 }

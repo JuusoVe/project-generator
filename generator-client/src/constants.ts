@@ -18,3 +18,6 @@ export const IDS = {
 };
 
 export const TBA_SUFFIX = ' (TBA)';
+
+// TODO: Get this based on preferences
+export const TEMPLATE_NAME = 'storefront-test-template';

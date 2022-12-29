@@ -23,14 +23,14 @@ export const useGithubAPI = (apiKey: string) => {
         >(`${REPO_PATH}/${TEMPLATE_REPO_OWNER}/${templateRepoName}/generate`, {
             name: newRepoName,
         });
-        return createRepoResponse.data;
+        return createRepoResponse;
     };
 
     const deleteUserRepo = async (username: string, repoName: string) => {
         const deleteRepoResponse = await client.delete<
             Endpoints['DELETE /repos/{owner}/{repo}']['response']
         >(`${REPO_PATH}/${username}/${repoName}`);
-        return deleteRepoResponse.data;
+        return deleteRepoResponse;
     };
 
     // const getRepoPublicEncryptionKey = async (

@@ -6,6 +6,9 @@ export enum StorageKeys {
     frontendProjectName = 'frontendProjectName',
     repoAPIKey = 'repoAPIKey',
     frontendAPIKey = 'frontendAPIKey',
+    destroySuccess = 'destroySuccess',
+    destroyStatusText = 'destroyStatusText',
+    createState = 'createState',
 }
 
 export type VercelCreateProjectResponse = {

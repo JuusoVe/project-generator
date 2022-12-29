@@ -39,7 +39,6 @@ const SelectPackageManager = () => {
                 onChange={updateRepoName}
                 value={repoNameValue}
                 inputProps={createTestIdProp(IDS.REPO_NAME_INPUT)}
-                // data-testid={}
             />
             <TextField
                 id={IDS.REPO_OWNER_INPUT}
