@@ -1,16 +1,21 @@
-import { expect, test } from '@playwright/test';
-import { urlNavigateTo } from './actions';
-import { ROUTES } from '../../src/constants';
+import { Page, test } from '@playwright/test';
+import { fillTextField, urlNavigateTo } from './actions';
+import { ROUTES, IDS } from '../../src/constants';
+import { TEST_CONSTANTS } from './test-constans';
 
-// export const urlNavigateTo = async (
-//     page: Page,
-//     expect: Expect,
-//     url: string
-// ) => {
-//     await page.goto(url);
-//     await expect(page).toHaveURL(`/.*${url}/`);
-// };
+// Use a single page for the entire spec
+let page: Page;
+test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+});
 
-test('homepage has title and links to intro page', async ({ page }) => {
-    await urlNavigateTo(page, expect, ROUTES.CREATE.PREFERENCES);
+test('can fill project preferences', async () => {
+    await urlNavigateTo(page, ROUTES.CREATE.PREFERENCES);
+    await fillTextField(page, IDS.REPO_NAME_INPUT, TEST_CONSTANTS.REPO_NAME);
+    await fillTextField(page, IDS.REPO_OWNER_INPUT, TEST_CONSTANTS.REPO_OWNER);
+    await fillTextField(
+        page,
+        IDS.FRONTEND_PROJECT_NAME_INPUT,
+        TEST_CONSTANTS.FRONTEND_PROJECT_NAME
+    );
 });

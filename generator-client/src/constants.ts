@@ -8,22 +8,13 @@ export const ROUTES = {
 };
 
 export const IDS = {
-    PACKAGE_MANAGER: 'package-manager-selector',
-    FRONTEND: 'frontend-selector',
-    REPO_NAME: 'repository-name',
-    REPO_OWNER: 'repository-owner',
-    REPO_API_KEY: 'repostiroy-api-key',
-    FRONTEND_API_KEY: 'frontend-api-key',
-};
-
-const TEST_ID_PREFIX = 'testid-';
-
-export const TEST_IDS = {
-    INPUTS: {
-        REPO_NAME: TEST_ID_PREFIX + IDS.REPO_NAME,
-        REPO_OWNER: TEST_ID_PREFIX + IDS.REPO_OWNER,
-        FRONTEND: TEST_ID_PREFIX + 'frontend-proejct-name',
-    },
+    PACKAGE_MANAGER_SELECTOR: 'package-manager-selector',
+    FRONTEND_SELECTOR: 'frontend-selector',
+    FRONTEND_PROJECT_NAME_INPUT: 'frontend-project-name-input',
+    REPO_NAME_INPUT: 'repository-name-input',
+    REPO_OWNER_INPUT: 'repository-owner-input',
+    REPO_API_KEY_INPUT: 'repostiroy-api-key-input',
+    FRONTEND_API_KEY_INPUT: 'frontend-api-key-input',
 };
 
 export const TBA_SUFFIX = ' (TBA)';

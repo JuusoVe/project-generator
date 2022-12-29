@@ -9,6 +9,7 @@ import { ChangeEvent } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import { IDS, TBA_SUFFIX } from '../constants';
 import { FrontEnds, StorageKeys } from '../models';
+import { createTestIdProp } from './helpers';
 
 const InputFrontendDetails = () => {
     const [_value, setValue] = useLocalStorage(
@@ -27,10 +28,10 @@ const InputFrontendDetails = () => {
 
     return (
         <>
-            <FormLabel id={IDS.FRONTEND}>Frontend</FormLabel>
+            <FormLabel id={IDS.FRONTEND_SELECTOR}>Frontend</FormLabel>
             <RadioGroup
-                aria-labelledby={IDS.FRONTEND}
-                name={IDS.FRONTEND}
+                aria-labelledby={IDS.FRONTEND_SELECTOR}
+                name={IDS.FRONTEND_SELECTOR}
                 onChange={(event) => setValue(event.target.value)}
                 defaultValue={FrontEnds.vercel}
             >
@@ -47,12 +48,13 @@ const InputFrontendDetails = () => {
                 />
             </RadioGroup>
             <TextField
-                id={IDS.FRONTEND}
+                id={IDS.FRONTEND_PROJECT_NAME_INPUT}
                 label="Frontend project name"
                 variant="outlined"
                 required
                 onChange={updateFrontendProjectName}
                 value={frontendProjectNameValue}
+                inputProps={createTestIdProp(IDS.FRONTEND_PROJECT_NAME_INPUT)}
             />
         </>
     );

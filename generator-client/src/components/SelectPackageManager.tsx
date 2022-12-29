@@ -16,10 +16,12 @@ const SelectPackageManager = () => {
 
     return (
         <>
-            <FormLabel id={IDS.PACKAGE_MANAGER}>Package Manager</FormLabel>
+            <FormLabel id={IDS.PACKAGE_MANAGER_SELECTOR}>
+                Package Manager
+            </FormLabel>
             <RadioGroup
-                aria-labelledby={IDS.PACKAGE_MANAGER}
-                name={IDS.PACKAGE_MANAGER}
+                aria-labelledby={IDS.PACKAGE_MANAGER_SELECTOR}
+                name={IDS.PACKAGE_MANAGER_SELECTOR}
                 onChange={(event) => setValue(event.target.value)}
                 defaultValue={PackageManagers.npm}
             >

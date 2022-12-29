@@ -3,6 +3,7 @@ import { ChangeEvent } from 'react';
 import { useSessionStorage } from 'usehooks-ts';
 import { IDS } from '../constants';
 import { StorageKeys } from '../models';
+import { createTestIdProp } from './helpers';
 
 const SelectPackageManager = () => {
     const [repoAPIKeyValue, setRepoAPIKeyValue] = useSessionStorage(
@@ -13,8 +14,6 @@ const SelectPackageManager = () => {
     const updateRepoAPIKey = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        console.log('here');
-
         setRepoAPIKeyValue(event.target.value);
     };
 
@@ -33,20 +32,22 @@ const SelectPackageManager = () => {
         <>
             <FormLabel>Repository Details</FormLabel>
             <TextField
-                id={IDS.REPO_API_KEY}
+                id={IDS.REPO_API_KEY_INPUT}
                 label="Repository API key"
                 variant="outlined"
                 required
                 onChange={updateRepoAPIKey}
                 value={repoAPIKeyValue}
+                inputProps={createTestIdProp(IDS.REPO_API_KEY_INPUT)}
             />
             <TextField
-                id={IDS.FRONTEND_API_KEY}
+                id={IDS.FRONTEND_API_KEY_INPUT}
                 label="Frontend API key"
                 variant="outlined"
                 required
                 onChange={updateFrontendAPIKey}
                 value={frontendAPIKeyValue}
+                inputProps={createTestIdProp(IDS.FRONTEND_API_KEY_INPUT)}
             />
         </>
     );
