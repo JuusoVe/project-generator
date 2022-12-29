@@ -38,7 +38,10 @@ const SelectPackageManager = () => {
                 required
                 onChange={updateRepoAPIKey}
                 value={repoAPIKeyValue}
-                inputProps={createTestIdProp(IDS.REPO_API_KEY_INPUT)}
+                inputProps={{
+                    ...createTestIdProp(IDS.REPO_API_KEY_INPUT),
+                }}
+                type="password"
             />
             <TextField
                 id={IDS.FRONTEND_API_KEY_INPUT}
@@ -48,6 +51,7 @@ const SelectPackageManager = () => {
                 onChange={updateFrontendAPIKey}
                 value={frontendAPIKeyValue}
                 inputProps={createTestIdProp(IDS.FRONTEND_API_KEY_INPUT)}
+                type="password"
             />
         </>
     );

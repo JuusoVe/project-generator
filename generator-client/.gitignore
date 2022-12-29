@@ -15,3 +15,6 @@ lerna-debug.log*
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# All env files
+*.env*

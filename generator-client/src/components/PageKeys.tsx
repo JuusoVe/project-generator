@@ -4,7 +4,7 @@ import InputKeys from './InputKeys';
 const PageKeys = () => {
     return (
         <>
-            <Typography variant="h2">Pick your flavors</Typography>
+            <Typography variant="h2">API keys</Typography>
             <FormControl>
                 <InputKeys></InputKeys>
             </FormControl>
