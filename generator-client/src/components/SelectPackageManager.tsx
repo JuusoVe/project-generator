@@ -1,6 +1,6 @@
 import { FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useLocalStorage } from 'usehooks-ts';
-import { IDENTIFIERS, TBA_SUFFIX } from '../constants';
+import { IDS, TBA_SUFFIX } from '../constants';
 import { StorageKeys } from '../models';
 
 export enum PackageManagers {
@@ -16,12 +16,10 @@ const SelectPackageManager = () => {
 
     return (
         <>
-            <FormLabel id={IDENTIFIERS.PACKAGE_MANAGER}>
-                Package Manager
-            </FormLabel>
+            <FormLabel id={IDS.PACKAGE_MANAGER}>Package Manager</FormLabel>
             <RadioGroup
-                aria-labelledby={IDENTIFIERS.PACKAGE_MANAGER}
-                name={IDENTIFIERS.PACKAGE_MANAGER}
+                aria-labelledby={IDS.PACKAGE_MANAGER}
+                name={IDS.PACKAGE_MANAGER}
                 onChange={(event) => setValue(event.target.value)}
                 defaultValue={PackageManagers.npm}
             >

@@ -12,3 +12,8 @@ export type VercelCreateProjectResponse = {
     accountId: string;
     id: string;
 };
+
+export enum FrontEnds {
+    vercel = 'vercel',
+    netlify = 'netlify',
+}

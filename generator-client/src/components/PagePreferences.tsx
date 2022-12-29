@@ -1,7 +1,6 @@
 import { FormControl, Typography } from '@mui/material';
 import InputFrontendDetails from './InputFrontendDetails';
 import InputRepoDetails from './InputRepoDetails';
-import SelectFrontend from './SelectFrontend';
 import SelectPackageManager from './SelectPackageManager';
 
 const PagePreferences = () => {
@@ -11,7 +10,6 @@ const PagePreferences = () => {
             <FormControl>
                 <SelectPackageManager />
                 <InputRepoDetails />
-                <SelectFrontend />
                 <InputFrontendDetails />
             </FormControl>
         </>

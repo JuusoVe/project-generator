@@ -1,7 +1,7 @@
 import { FormLabel, TextField } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useSessionStorage } from 'usehooks-ts';
-import { IDENTIFIERS } from '../constants';
+import { IDS } from '../constants';
 import { StorageKeys } from '../models';
 
 const SelectPackageManager = () => {
@@ -33,7 +33,7 @@ const SelectPackageManager = () => {
         <>
             <FormLabel>Repository Details</FormLabel>
             <TextField
-                id={IDENTIFIERS.REPO_API_KEY}
+                id={IDS.REPO_API_KEY}
                 label="Repository API key"
                 variant="outlined"
                 required
@@ -41,7 +41,7 @@ const SelectPackageManager = () => {
                 value={repoAPIKeyValue}
             />
             <TextField
-                id={IDENTIFIERS.FRONTEND_API_KEY}
+                id={IDS.FRONTEND_API_KEY}
                 label="Frontend API key"
                 variant="outlined"
                 required
