@@ -23,6 +23,13 @@ export const IDS = {
     },
 };
 
+export const SECRET_KEYS = {
+    VERCEL: {
+        PROJECT_ID: 'VERCEL_PROJECT_ID',
+        ORG_ID: 'VERCEL_ORG_ID',
+    },
+};
+
 export const TBA_SUFFIX = ' (TBA)';
 
 // TODO: Get this based on preferences

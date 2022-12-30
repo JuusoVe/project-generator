@@ -1,6 +1,7 @@
 // @ts-ignore}
 import axios from 'axios';
 import { Endpoints } from '@octokit/types';
+import { encryptSecret } from '../helpers';
 
 const GITHUB_BASE_URL = 'https://api.github.com';
 const REPO_PATH = '/repos';
@@ -11,6 +12,7 @@ export const useGithubAPI = (apiKey: string) => {
         baseURL: GITHUB_BASE_URL,
         headers: {
             Authorization: `Bearer ${
+                // use env as a fallback for development
                 apiKey ? apiKey : import.meta.env.VITE_TEST_GH_TOKEN
             }`,
         },
@@ -20,47 +22,62 @@ export const useGithubAPI = (apiKey: string) => {
         newRepoName: string,
         templateRepoName: string
     ) => {
-        const createRepoResponse = await client.post<
-            Endpoints['POST /repos/{template_owner}/{template_repo}/generate']['response']
+        const response = await client.post<
+            Endpoints['POST /repos/{template_owner}/{template_repo}/generate']['response']['data']
         >(`${REPO_PATH}/${TEMPLATE_REPO_OWNER}/${templateRepoName}/generate`, {
             name: newRepoName,
         });
-        return createRepoResponse;
+        return response;
     };
 
     const deleteUserRepo = async (username: string, repoName: string) => {
-        const deleteRepoResponse = await client.delete<
-            Endpoints['DELETE /repos/{owner}/{repo}']['response']
+        const response = await client.delete<
+            Endpoints['DELETE /repos/{owner}/{repo}']['response']['data']
         >(`${REPO_PATH}/${username}/${repoName}`);
-        return deleteRepoResponse;
+        return response;
     };
 
-    // const getRepoPublicEncryptionKey = async (
-    //     username: string,
-    //     repoName: string
-    // ) => {
+    const getRepoPublicEncryptionKey = async (
+        username: string,
+        repoName: string
+    ) => {
+        const response = await client.get<
+            Endpoints['GET /repos/{owner}/{repo}/actions/secrets/public-key']['response']['data']
+        >(`${REPO_PATH}/${username}/${repoName}/actions/secrets/public-key`);
+        return response;
+    };
 
-    //     return await githubAPIClient.rest.actions.getRepoPublicKey({
-    //         repo: repoName,
-    //         owner: username,
-    //     });
-    // };
+    const createRepoSecret = async (
+        username: string,
+        repoName: string,
+        secretName: string,
+        secretValue: string
+    ) => {
+        const getPublicKeyResponse = await getRepoPublicEncryptionKey(
+            username,
+            repoName
+        );
 
-    // const createRepoSecret = async (
-    //     username: string,
-    //     repoName: string,
-    //     secretName: string,
-    //     secretValue: string,
-    //     keyId: string
-    // ) => {
-    //     return await githubAPIClient.rest.actions.createOrUpdateRepoSecret({
-    //         owner: username,
-    //         repo: repoName,
-    //         secret_name: secretName,
-    //         encrypted_value: secretValue,
-    //         key_id: keyId,
-    //     });
-    // };
+        const { key_id: publicKeyId, key: publicKeyValue } =
+            getPublicKeyResponse.data;
+
+        const encryptedSecretValue = await encryptSecret(
+            publicKeyValue,
+            secretValue
+        );
+
+        const createSecretResponse = await client.put<
+            Endpoints['PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}']['response']['data']
+        >(
+            `${REPO_PATH}/${username}/${repoName}/actions/secrets/${secretName}`,
+            {
+                encrypted_value: encryptedSecretValue,
+                key_id: publicKeyId,
+            }
+        );
+
+        return createSecretResponse;
+    };
 
     /**
      * This sends an event similar to manually triggering a pipeline from the GUI.
@@ -97,8 +114,8 @@ export const useGithubAPI = (apiKey: string) => {
     return {
         createRepoFromTemplate,
         deleteUserRepo,
-        // getRepoPublicEncryptionKey,
-        // createRepoSecret,
+        getRepoPublicEncryptionKey,
+        createRepoSecret,
         // triggerRepositoryPipeline,
         // listWorkflows,
     };

@@ -3,7 +3,7 @@ import { ChangeEvent } from 'react';
 import { useSessionStorage } from 'usehooks-ts';
 import { IDS } from '../constants';
 import { StorageKeys } from '../models';
-import { createTestIdProp } from './helpers';
+import { createTestIdProp } from '../helpers';
 
 const SelectPackageManager = () => {
     const [repoAPIKeyValue, setRepoAPIKeyValue] = useSessionStorage(

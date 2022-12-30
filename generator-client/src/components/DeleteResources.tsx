@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useLocalStorage, useSessionStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
 import { useVercelAPI } from '../apis/vercel';
-import { StorageKeys, VercelCreateProjectResponse } from '../models';
+import { StorageKeys } from '../models';
 
 const DeleteResources = () => {
     const [destroyRepoSuccess, setDestroyRepoSuccess] = useLocalStorage(
@@ -21,29 +21,18 @@ const DeleteResources = () => {
     );
     const [destroyFrontendStatusText, setDestroyFrontendStatusText] =
         useLocalStorage(StorageKeys.destroyFrontendStatusText, '');
-    const [githubAPIKey, _setGithubAPIKeyValue] = useSessionStorage(
-        StorageKeys.repoAPIKey,
-        ''
-    );
-    const [frontendAPIKey, _setFrontendAPIKeyValue] = useSessionStorage(
-        StorageKeys.frontendAPIKey,
-        ''
-    );
-    const [repoNameValue, _setRepoNameValue] = useLocalStorage(
-        StorageKeys.repoName,
-        ''
-    );
-    const [repoOwnerValue, _setRepoOwnerValue] = useLocalStorage(
-        StorageKeys.repoOwner,
-        ''
-    );
-    const [frontendNameValue, _setFrontendNameValue] = useLocalStorage(
+    const [githubAPIKey] = useSessionStorage(StorageKeys.repoAPIKey, '');
+    const [frontendAPIKey] = useSessionStorage(StorageKeys.frontendAPIKey, '');
+    const [repoNameValue] = useLocalStorage(StorageKeys.repoName, '');
+    const [repoOwnerValue] = useLocalStorage(StorageKeys.repoOwner, '');
+    const [frontendNameValue] = useLocalStorage(
         StorageKeys.frontendProjectName,
         ''
     );
 
     const githubAPI = useGithubAPI(githubAPIKey);
     const vercelAPI = useVercelAPI(frontendAPIKey);
+
     const deleteResources = async () => {
         try {
             await githubAPI.deleteUserRepo(repoOwnerValue, repoNameValue);
@@ -88,7 +77,9 @@ const DeleteResources = () => {
             <Typography
                 variant="h6"
                 sx={{
-                    color: destroyRepoSuccess ? 'primary.main' : 'error.main',
+                    color: destroyFrontendSuccess
+                        ? 'primary.main'
+                        : 'error.main',
                 }}
             >
                 {destroyFrontendStatusText}

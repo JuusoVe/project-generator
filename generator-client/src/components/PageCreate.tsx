@@ -1,13 +1,21 @@
-import { Button, Box } from '@mui/material';
-import axios, { AxiosResponse } from 'axios';
+import {
+    Button,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    CircularProgress,
+    Typography,
+    Table,
+} from '@mui/material';
+import axios from 'axios';
 import { useSessionStorage, useLocalStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
-import { StorageKeys, VercelCreateProjectResponse } from '../models';
+import { StorageKeys, VercelCreateProjectData } from '../models';
 import DoneIcon from '@mui/icons-material/Done';
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
-import CircularProgress from '@mui/material/CircularProgress';
-import { useState } from 'react';
-import { IDS, TEMPLATE_NAME } from '../constants';
+import { IDS, SECRET_KEYS, TEMPLATE_NAME } from '../constants';
 import { useVercelAPI } from '../apis/vercel';
 
 enum CreateStepStatus {
@@ -27,26 +35,26 @@ interface StepState {
 const getStatusIcon = (status: CreateStepStatus) => {
     switch (status) {
         case CreateStepStatus.inProgress:
-            return <CircularProgress />;
+            return <CircularProgress color="info" />;
         case CreateStepStatus.completed:
-            return <DoneIcon />;
+            return <DoneIcon color="success" />;
         case CreateStepStatus.failed:
-            return <ReportGmailerrorredIcon />;
+            return <ReportGmailerrorredIcon color="error" />;
         default:
-            return null;
+            return <DoneIcon color="disabled" />;
     }
 };
 
 const getStatusColor = (status: CreateStepStatus) => {
     switch (status) {
         case CreateStepStatus.inProgress:
-            return 'info.main';
+            return 'info';
         case CreateStepStatus.completed:
-            return 'success.main';
+            return 'success';
         case CreateStepStatus.failed:
-            return 'error.main';
+            return 'error';
         default:
-            return 'primary.main';
+            return 'primary';
     }
 };
 
@@ -78,27 +86,20 @@ const initialCreateState: StepState[] = [
 ];
 
 const PageCreate = () => {
-    const [githubAPIKey, _setGithubAPIKeyValue] = useSessionStorage(
-        StorageKeys.repoAPIKey,
-        ''
-    );
-    const [vercelAPIKey, _setVercelAPIKeyValue] = useSessionStorage(
-        StorageKeys.repoAPIKey,
-        ''
-    );
-    const [repoNameValue, _setRepoNameValue] = useLocalStorage(
-        StorageKeys.repoName,
-        ''
-    );
-    const [frontendProjectName, _setFrontendProjectNameValue] = useLocalStorage(
+    const [githubAPIKey] = useSessionStorage(StorageKeys.repoAPIKey, '');
+    const [vercelAPIKey] = useSessionStorage(StorageKeys.repoAPIKey, '');
+    const [repoName] = useLocalStorage(StorageKeys.repoName, '');
+    const [repoOwner] = useLocalStorage(StorageKeys.repoOwner, '');
+
+    const [frontendProjectName] = useLocalStorage(
         StorageKeys.frontendProjectName,
         ''
     );
     const [vercelCreateData, setVercelCreateData] =
-        useLocalStorage<VercelCreateProjectResponse>(
-            StorageKeys.vercelCreateData,
-            { id: '', accountId: '' }
-        );
+        useLocalStorage<VercelCreateProjectData>(StorageKeys.vercelCreateData, {
+            id: '',
+            accountId: '',
+        });
     const [createState, setCreateState] = useLocalStorage<StepState[]>(
         StorageKeys.createState,
         initialCreateState
@@ -129,24 +130,38 @@ const PageCreate = () => {
     const operations = {
         [IDS.STEPS.CREATE_REPO]: async () => {
             return await githubAPI.createRepoFromTemplate(
-                repoNameValue,
+                repoName,
                 TEMPLATE_NAME
             );
         },
         [IDS.STEPS.CREATE_FRONTEND]: async () => {
-            return await vercelAPI.createProject(frontendProjectName);
+            const createRes = await vercelAPI.createProject(
+                frontendProjectName
+            );
+            setVercelCreateData(
+                // TS running out of brains here with the return types
+                createRes.data
+            );
+            return;
         },
         [IDS.STEPS.CREATE_REPO_SECRETS]: async () => {
-            return await githubAPI.createRepoFromTemplate(
-                repoNameValue,
-                'stuff'
-            );
+            return await Promise.all([
+                await githubAPI.createRepoSecret(
+                    repoOwner,
+                    repoName,
+                    SECRET_KEYS.VERCEL.PROJECT_ID,
+                    vercelCreateData.id
+                ),
+                await githubAPI.createRepoSecret(
+                    repoOwner,
+                    repoName,
+                    SECRET_KEYS.VERCEL.ORG_ID,
+                    vercelCreateData.accountId
+                ),
+            ]);
         },
         [IDS.STEPS.DEPLOY_FRONTEND]: async () => {
-            return await githubAPI.createRepoFromTemplate(
-                repoNameValue,
-                'stuff'
-            );
+            return await githubAPI.createRepoFromTemplate(repoName, 'stuff');
         },
     };
 
@@ -167,20 +182,11 @@ const PageCreate = () => {
 
     // Orchestrate project creation.
     const createProject = async () => {
-        // Run repo creation and frontend creation in parallel
-        await Promise.all([
+        const createRes = await Promise.allSettled([
             await executeStep(IDS.STEPS.CREATE_REPO),
-            async () => {
-                const frontendCreateRes = await executeStep(
-                    IDS.STEPS.CREATE_FRONTEND
-                );
-                if (frontendCreateRes) {
-                    setVercelCreateData(
-                        frontendCreateRes.data as VercelCreateProjectResponse
-                    );
-                }
-            },
+            await executeStep(IDS.STEPS.CREATE_FRONTEND),
         ]);
+        if (createRes) await executeStep(IDS.STEPS.CREATE_REPO_SECRETS);
     };
 
     const resetCreation = async () => {
@@ -191,27 +197,28 @@ const PageCreate = () => {
     return (
         <>
             <Button onClick={createProject}>Create Project</Button>
-            <Box
-                sx={{
-                    width: '100%',
-                    display: 'grid',
-                    gridTemplateColumns: 'auto auto auto auto',
-                    rowGap: 5,
-                    columnGap: 2,
-                    gridAutoRows: 'minmax(40px, auto)',
-                }}
-            >
-                {createState.map((step) => {
-                    return (
-                        <>
-                            <Box>{step.label}</Box>
-                            <Box>{step.status}</Box>
-                            <Box>{getStatusIcon(step.status)}</Box>
-                            <Box>{step.statusMessage}</Box>
-                        </>
-                    );
-                })}
-            </Box>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell colSpan={3} />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {createState.map((step, index) => (
+                            <TableRow key={index}>
+                                <TableCell width={'30%'}>
+                                    {step.label}
+                                </TableCell>
+                                <TableCell width={'20%'}>
+                                    {getStatusIcon(step.status)}
+                                </TableCell>
+                                <TableCell>{step.statusMessage}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <Button onClick={resetCreation}>Reset creation</Button>
         </>
     );

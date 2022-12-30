@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { VercelCreateProjectResponse } from '../models';
+import { VercelCreateProjectData } from '../models';
 
 const VERCEL_BASE_URL = 'https://api.vercel.com';
 const VERCEL_PROJECTS_PATH = '/v9/projects';
@@ -14,6 +14,7 @@ export const useVercelAPI = (apiKey: string) => {
         baseURL: VERCEL_BASE_URL,
         headers: {
             Authorization: `Bearer ${
+                // use env as a fallback for development
                 apiKey ? apiKey : import.meta.env.VITE_TEST_VERCEL_TOKEN
             }`,
         },
@@ -49,13 +50,10 @@ export const useVercelAPI = (apiKey: string) => {
      */
     const createProject = async (projectName: string) => {
         const createVercelProjectResponse =
-            await client.post<VercelCreateProjectResponse>(
-                VERCEL_PROJECTS_PATH,
-                {
-                    name: projectName,
-                    ...VERCEL_NEXT_PROJECT_CONFIG,
-                }
-            );
+            await client.post<VercelCreateProjectData>(VERCEL_PROJECTS_PATH, {
+                name: projectName,
+                ...VERCEL_NEXT_PROJECT_CONFIG,
+            });
         return createVercelProjectResponse;
     };
 

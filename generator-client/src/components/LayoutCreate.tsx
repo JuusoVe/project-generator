@@ -1,10 +1,10 @@
 import { Stack } from '@mui/system';
 import { Outlet } from 'react-router-dom';
-import WorkflowStepper from '../components/WorkflowStepper';
-import Destroy from '../components/DeleteResources';
+import WorkflowStepper from './StepperWorkflow';
+import Destroy from './DeleteResources';
 import { Container } from '@mui/material';
 
-export default function CreateLayout() {
+export default function LayoutCreate() {
     return (
         <Container>
             <Stack

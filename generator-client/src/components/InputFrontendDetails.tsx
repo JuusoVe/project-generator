@@ -9,7 +9,7 @@ import { ChangeEvent } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import { IDS, TBA_SUFFIX } from '../constants';
 import { FrontEnds, StorageKeys } from '../models';
-import { createTestIdProp } from './helpers';
+import { createTestIdProp } from '../helpers';
 
 const InputFrontendDetails = () => {
     const [_value, setValue] = useLocalStorage(

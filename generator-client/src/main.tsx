@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ROUTES } from './constants';
-import CreateLayout from './layouts/create';
+import LayoutCreate from './components/LayoutCreate';
 import PageCreate from './components/PageCreate';
 import Keys from './components/PageKeys';
 import PagePreferences from './components/PagePreferences';
@@ -10,7 +10,7 @@ import PagePreferences from './components/PagePreferences';
 const router = createBrowserRouter([
     {
         path: ROUTES.ROOT,
-        element: <CreateLayout />,
+        element: <LayoutCreate />,
         children: [
             { path: ROUTES.CREATE.PREFERENCES, element: <PagePreferences /> },
             { path: ROUTES.CREATE.KEYS, element: <Keys /> },

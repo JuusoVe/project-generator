@@ -17,7 +17,7 @@ export enum StorageKeys {
     vercelCreateData = 'vercelCreateData',
 }
 
-export type VercelCreateProjectResponse = {
+export type VercelCreateProjectData = {
     accountId: string;
     id: string;
 };
