@@ -6,7 +6,6 @@ import SelectPackageManager from './SelectPackageManager';
 const PagePreferences = () => {
     return (
         <>
-            <Typography variant="h2">Pick your flavors</Typography>
             <FormControl>
                 <SelectPackageManager />
                 <InputRepoDetails />

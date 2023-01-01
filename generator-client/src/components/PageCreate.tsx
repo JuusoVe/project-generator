@@ -6,31 +6,26 @@ import {
     TableCell,
     TableBody,
     CircularProgress,
-    Typography,
     Table,
 } from '@mui/material';
 import axios from 'axios';
 import { useSessionStorage, useLocalStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
-import { StorageKeys, VercelCreateProjectData } from '../models';
+import {
+    CreateStepStatus,
+    StepState,
+    StorageKeys,
+    VercelProjectData,
+} from '../models';
 import DoneIcon from '@mui/icons-material/Done';
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
-import { IDS, SECRET_KEYS, TEMPLATE_NAME } from '../constants';
+import {
+    IDS,
+    INITIAL_CREATE_STATE,
+    SECRET_KEYS,
+    TEMPLATE_NAME,
+} from '../constants';
 import { useVercelAPI } from '../apis/vercel';
-
-enum CreateStepStatus {
-    notStarted = 'not-started',
-    inProgress = 'in-progress',
-    completed = 'completed',
-    failed = 'failed',
-}
-
-interface StepState {
-    label: string;
-    status: CreateStepStatus;
-    statusMessage: string;
-    id: string;
-}
 
 const getStatusIcon = (status: CreateStepStatus) => {
     switch (status) {
@@ -45,49 +40,9 @@ const getStatusIcon = (status: CreateStepStatus) => {
     }
 };
 
-const getStatusColor = (status: CreateStepStatus) => {
-    switch (status) {
-        case CreateStepStatus.inProgress:
-            return 'info';
-        case CreateStepStatus.completed:
-            return 'success';
-        case CreateStepStatus.failed:
-            return 'error';
-        default:
-            return 'primary';
-    }
-};
-
-const initialCreateState: StepState[] = [
-    {
-        label: 'Create repo',
-        status: CreateStepStatus.notStarted,
-        statusMessage: '',
-        id: IDS.STEPS.CREATE_REPO,
-    },
-    {
-        label: 'Create frontend',
-        status: CreateStepStatus.notStarted,
-        statusMessage: '',
-        id: IDS.STEPS.CREATE_FRONTEND,
-    },
-    {
-        label: 'Set repo secrets',
-        status: CreateStepStatus.notStarted,
-        statusMessage: '',
-        id: IDS.STEPS.CREATE_REPO_SECRETS,
-    },
-    {
-        label: 'Deploy frontend',
-        status: CreateStepStatus.notStarted,
-        statusMessage: '',
-        id: IDS.STEPS.DEPLOY_FRONTEND,
-    },
-];
-
 const PageCreate = () => {
     const [githubAPIKey] = useSessionStorage(StorageKeys.repoAPIKey, '');
-    const [vercelAPIKey] = useSessionStorage(StorageKeys.repoAPIKey, '');
+    const [vercelAPIKey] = useSessionStorage(StorageKeys.frontendAPIKey, '');
     const [repoName] = useLocalStorage(StorageKeys.repoName, '');
     const [repoOwner] = useLocalStorage(StorageKeys.repoOwner, '');
 
@@ -95,31 +50,42 @@ const PageCreate = () => {
         StorageKeys.frontendProjectName,
         ''
     );
-    const [vercelCreateData, setVercelCreateData] =
-        useLocalStorage<VercelCreateProjectData>(StorageKeys.vercelCreateData, {
+    const [, setVercelCreateData] = useLocalStorage<VercelProjectData>(
+        StorageKeys.vercelCreateData,
+        {
             id: '',
             accountId: '',
-        });
+        }
+    );
     const [createState, setCreateState] = useLocalStorage<StepState[]>(
         StorageKeys.createState,
-        initialCreateState
+        INITIAL_CREATE_STATE
     );
+
     const updateCreateState = (
         step: StepState['id'],
-        status: StepState['status'],
-        statusMessage: StepState['statusMessage'] = ''
+        status?: StepState['status'],
+        statusMessage?: StepState['statusMessage']
     ) => {
         const stepIndex = createState.findIndex(({ id }) => id === step);
         if (stepIndex === -1) {
             console.log('Failed to determine step to update.');
             return;
         }
+        const originalStepState = createState[stepIndex];
+        // Maybe modify state
+        const stepWithNewStatus = status
+            ? { ...originalStepState, status }
+            : originalStepState;
+        // Maybe modify message
+        const stepWithNewMessage = statusMessage
+            ? { ...stepWithNewStatus, statusMessage }
+            : stepWithNewStatus;
+
         const newState = createState;
-        newState[stepIndex] = {
-            ...createState[stepIndex],
-            status,
-            statusMessage,
-        };
+
+        // Replace a single step state
+        newState[stepIndex] = stepWithNewMessage;
         setCreateState(newState);
     };
 
@@ -129,69 +95,117 @@ const PageCreate = () => {
     // API operations keyed by step ids
     const operations = {
         [IDS.STEPS.CREATE_REPO]: async () => {
-            return await githubAPI.createRepoFromTemplate(
+            const result = await githubAPI.createRepoFromTemplate(
                 repoName,
                 TEMPLATE_NAME
             );
+
+            if (result) {
+                updateCreateState(
+                    IDS.STEPS.CREATE_REPO,
+                    CreateStepStatus.completed,
+                    `url: ${result.data.html_url}`
+                );
+            }
+            return result.data;
         },
         [IDS.STEPS.CREATE_FRONTEND]: async () => {
-            const createRes = await vercelAPI.createProject(
-                frontendProjectName
-            );
+            const result = await vercelAPI.createProject(frontendProjectName);
             setVercelCreateData(
                 // TS running out of brains here with the return types
-                createRes.data
+                result.data
             );
-            return;
+            return result.data;
         },
-        [IDS.STEPS.CREATE_REPO_SECRETS]: async () => {
+        [IDS.STEPS.CREATE_REPO_SECRETS]: async (
+            vercelProjectData: VercelProjectData
+        ) => {
             return await Promise.all([
                 await githubAPI.createRepoSecret(
                     repoOwner,
                     repoName,
                     SECRET_KEYS.VERCEL.PROJECT_ID,
-                    vercelCreateData.id
+                    vercelProjectData.id
                 ),
                 await githubAPI.createRepoSecret(
                     repoOwner,
                     repoName,
                     SECRET_KEYS.VERCEL.ORG_ID,
-                    vercelCreateData.accountId
+                    vercelProjectData.accountId
+                ),
+                await githubAPI.createRepoSecret(
+                    repoOwner,
+                    repoName,
+                    SECRET_KEYS.VERCEL.TOKEN,
+                    vercelAPIKey
+                        ? vercelAPIKey
+                        : import.meta.env.VITE_TEST_VERCEL_TOKEN
                 ),
             ]);
         },
-        [IDS.STEPS.DEPLOY_FRONTEND]: async () => {
-            return await githubAPI.createRepoFromTemplate(repoName, 'stuff');
+        // [IDS.STEPS.WAIT_FOR_TESTS]: async () => {
+        //     return await githubAPI.waitForTestComplete(repoOwner, repoName);
+        // },
+        [IDS.STEPS.WAIT_FOR_DEPLOYMENT]: async () => {
+            const result = await vercelAPI.waitForDeployment(
+                frontendProjectName
+            );
+            console.log('result in operation');
+
+            console.log(result);
+
+            return result;
         },
     };
 
-    // Execution wrapper to dry up handling responses
-    const executeStep = async (step: string) => {
+    // TODO: Type this, can return AxiosResponse or void or..
+    type StepFunction = (args?: any) => Promise<any>;
+
+    // Execution wrapper to DRY up handling responses
+    const executeStep = async (
+        stepId: string,
+        stepFunction: StepFunction,
+        args?: VercelProjectData // This is a union of the possible args types, just this for now
+    ) => {
         try {
-            updateCreateState(step, CreateStepStatus.inProgress);
-            const res = await operations[step]();
-            updateCreateState(step, CreateStepStatus.completed);
-            return res;
+            updateCreateState(stepId, CreateStepStatus.inProgress);
+            const result = args
+                ? await stepFunction(args)
+                : await stepFunction();
+            if (result) {
+                updateCreateState(stepId, CreateStepStatus.completed);
+                return result;
+            }
         } catch (err) {
+            // Message from data -> message from error -> fallback
             const failMessage = axios.isAxiosError(err)
                 ? err.response?.data?.message ?? err.message
                 : `Operation failed: Unable to parse message.`;
-            updateCreateState(step, CreateStepStatus.failed, failMessage);
+            updateCreateState(stepId, CreateStepStatus.failed, failMessage);
         }
     };
 
     // Orchestrate project creation.
     const createProject = async () => {
-        const createRes = await Promise.allSettled([
-            await executeStep(IDS.STEPS.CREATE_REPO),
-            await executeStep(IDS.STEPS.CREATE_FRONTEND),
-        ]);
-        if (createRes) await executeStep(IDS.STEPS.CREATE_REPO_SECRETS);
-    };
-
-    const resetCreation = async () => {
-        // TODO: Check in progress and prompt
-        setCreateState(initialCreateState);
+        setCreateState(INITIAL_CREATE_STATE);
+        await executeStep(
+            IDS.STEPS.CREATE_REPO,
+            operations[IDS.STEPS.CREATE_REPO]
+        );
+        const createFrontendRes = await executeStep(
+            IDS.STEPS.CREATE_FRONTEND,
+            operations[IDS.STEPS.CREATE_FRONTEND]
+        );
+        await executeStep(
+            IDS.STEPS.CREATE_REPO_SECRETS,
+            operations[IDS.STEPS.CREATE_REPO_SECRETS],
+            createFrontendRes
+        );
+        await executeStep(
+            IDS.STEPS.WAIT_FOR_DEPLOYMENT,
+            operations[IDS.STEPS.WAIT_FOR_DEPLOYMENT],
+            createFrontendRes
+        );
     };
 
     return (
@@ -219,7 +233,6 @@ const PageCreate = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button onClick={resetCreation}>Reset creation</Button>
         </>
     );
 };

@@ -1,7 +1,8 @@
-// @ts-ignore}
 import axios from 'axios';
 import { Endpoints } from '@octokit/types';
 import { encryptSecret } from '../helpers';
+import retry from 'async-await-retry';
+import { SECONDS_10 } from '../constants';
 
 const GITHUB_BASE_URL = 'https://api.github.com';
 const REPO_PATH = '/repos';
@@ -37,6 +38,9 @@ export const useGithubAPI = (apiKey: string) => {
         return response;
     };
 
+    /**
+     * Fetches a public key to sign a repo secret with.
+     */
     const getRepoPublicEncryptionKey = async (
         username: string,
         repoName: string
@@ -92,31 +96,59 @@ export const useGithubAPI = (apiKey: string) => {
      *
      *  The types filter is optional but highly recommended to avoid accidental triggers.
      */
-    // const triggerRepositoryPipeline = async (
-    //     username: string,
-    //     repoName: string,
-    //     eventType: string
-    // ) => {
-    //     return await githubAPIClient.rest.repos.createDispatchEvent({
-    //         owner: username,
-    //         repo: repoName,
-    //         event_type: eventType,
-    //     });
-    // };
+    const triggerRepoPipeline = async (
+        username: string,
+        repoName: string,
+        eventType: string
+    ) => {
+        const response = await client.post<
+            Endpoints['POST /repos/{owner}/{repo}/dispatches']['response']['data']
+        >(`${REPO_PATH}/${username}/${repoName}/dispatches`, {
+            event_type: eventType,
+        });
+        console.log('trigger res:');
+        console.log(response.data);
 
-    // const listWorkflows = async (username: string, repo: string) => {
-    //     return await githubAPIClient.rest.actions.listRepoWorkflows({
-    //         owner: username,
-    //         repo: repo,
-    //     });
-    // };
+        return response;
+    };
+
+    const listWorkflows = async (username: string, repoName: string) => {
+        const response = await client.get<
+            Endpoints['GET /repos/{owner}/{repo}/actions/runs']
+        >(`${REPO_PATH}/${username}/${repoName}/actions/runs`);
+        return response;
+    };
+
+    const listWorkflowRuns = async (username: string, repoName: string) => {
+        const response = await client.get<
+            Endpoints['GET /repos/{owner}/{repo}/actions/runs']
+        >(`${REPO_PATH}/${username}/${repoName}/actions/runs`);
+        return response;
+    };
+
+    const waitForTestComplete = async (username: string, repoName: string) => {
+        retry(
+            async () => {
+                const workflows = await listWorkflowRuns(username, repoName);
+                console.log('workflows');
+                console.log(workflows.data);
+                throw new Error('Just throwing lol.');
+            },
+            undefined,
+            {
+                retriesMax: 12,
+                interval: SECONDS_10,
+                exponential: false,
+            }
+        );
+    };
 
     return {
         createRepoFromTemplate,
         deleteUserRepo,
         getRepoPublicEncryptionKey,
         createRepoSecret,
-        // triggerRepositoryPipeline,
-        // listWorkflows,
+        triggerRepoPipeline,
+        waitForTestComplete,
     };
 };

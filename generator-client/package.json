@@ -13,6 +13,7 @@
         "@emotion/styled": "^11.10.5",
         "@mui/icons-material": "^5.11.0",
         "@mui/material": "^5.11.2",
+        "async-await-retry": "^2.0.1",
         "axios": "^1.2.1",
         "buffer": "^6.0.3",
         "libsodium-wrappers": "^0.7.10",

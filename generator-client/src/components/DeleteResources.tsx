@@ -4,9 +4,14 @@ import axios from 'axios';
 import { useLocalStorage, useSessionStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
 import { useVercelAPI } from '../apis/vercel';
-import { StorageKeys } from '../models';
+import { INITIAL_CREATE_STATE } from '../constants';
+import { StepState, StorageKeys } from '../models';
 
 const DeleteResources = () => {
+    const [, setCreateState] = useLocalStorage<StepState[]>(
+        StorageKeys.createState,
+        INITIAL_CREATE_STATE
+    );
     const [destroyRepoSuccess, setDestroyRepoSuccess] = useLocalStorage(
         StorageKeys.destroyRepoSuccess,
         true
@@ -32,6 +37,11 @@ const DeleteResources = () => {
 
     const githubAPI = useGithubAPI(githubAPIKey);
     const vercelAPI = useVercelAPI(frontendAPIKey);
+
+    const resetCreation = async () => {
+        // TODO: Check in progress and prompt
+        setCreateState(INITIAL_CREATE_STATE);
+    };
 
     const deleteResources = async () => {
         try {
@@ -62,6 +72,7 @@ const DeleteResources = () => {
                 }`
             );
         }
+        resetCreation();
     };
 
     return (
@@ -85,6 +96,7 @@ const DeleteResources = () => {
                 {destroyFrontendStatusText}
             </Typography>
             <Button onClick={deleteResources}>Delete resources</Button>
+            <Button onClick={resetCreation}>Reset creation</Button>
         </Stack>
     );
 };

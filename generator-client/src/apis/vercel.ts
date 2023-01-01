@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { VercelCreateProjectData } from '../models';
+import retry from 'async-await-retry';
+import { VercelProjectData } from '../models';
+import { SECONDS_10 } from '../constants';
 
 const VERCEL_BASE_URL = 'https://api.vercel.com';
 const VERCEL_PROJECTS_PATH = '/v9/projects';
@@ -49,23 +51,67 @@ export const useVercelAPI = (apiKey: string) => {
      * directly here when creating.
      */
     const createProject = async (projectName: string) => {
-        const createVercelProjectResponse =
-            await client.post<VercelCreateProjectData>(VERCEL_PROJECTS_PATH, {
+        const response = await client.post<VercelProjectData>(
+            VERCEL_PROJECTS_PATH,
+            {
                 name: projectName,
                 ...VERCEL_NEXT_PROJECT_CONFIG,
-            });
-        return createVercelProjectResponse;
+            }
+        );
+
+        return response;
     };
 
     const deleteProject = async (projectName: string) => {
-        const deleteVercelProjectResponse = await client.delete(
+        const response = await client.delete(
             VERCEL_PROJECTS_PATH + '/' + projectName
         );
-        return deleteVercelProjectResponse;
+        return response;
+    };
+
+    const getProject = async (projectName: string) => {
+        const response = await client.get<VercelProjectData>(
+            `${VERCEL_PROJECTS_PATH}/${projectName}`
+        );
+        return response;
+    };
+
+    const waitForDeployment = async (
+        projectName: string
+    ): Promise<VercelProjectData['latestDeployments']> => {
+        return await retry(
+            async () => {
+                const project = await getProject(projectName);
+                console.log('project:');
+                console.log(project);
+
+                const { latestDeployments: deployments } = project.data;
+                if (!deployments || !deployments.length) {
+                    throw new Error('No deployments.');
+                }
+
+                const deploymentComplete = deployments.some(
+                    ({ readyState }) => {
+                        return readyState === 'READY';
+                    }
+                );
+                if (!deploymentComplete) {
+                    throw new Error('Deployment not complete');
+                }
+                return deployments;
+            },
+            undefined,
+            {
+                retriesMax: 12,
+                interval: SECONDS_10,
+                exponential: false,
+            }
+        );
     };
 
     return {
         createProject,
         deleteProject,
+        waitForDeployment,
     };
 };

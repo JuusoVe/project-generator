@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom';
 import WorkflowStepper from './StepperWorkflow';
 import Destroy from './DeleteResources';
 import { Container } from '@mui/material';
+import { IDS } from '../constants';
+import { StepState, CreateStepStatus } from '../models';
 
 export default function LayoutCreate() {
     return (

@@ -1,7 +1,0 @@
-{
-    "bail": 1,
-    "verbose": true,
-    "preset": "ts-jest",
-    "testTimeout": 5000,
-    "setupFiles": ["dotenv/config"]
-}
