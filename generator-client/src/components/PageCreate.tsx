@@ -23,6 +23,7 @@ import {
     IDS,
     INITIAL_CREATE_STATE,
     SECRET_KEYS,
+    STATUS_SUFFIX,
     TEMPLATE_NAME,
 } from '../constants';
 import { useVercelAPI } from '../apis/vercel';
@@ -210,7 +211,9 @@ const PageCreate = () => {
 
     return (
         <>
-            <Button onClick={createProject}>Create Project</Button>
+            <Button onClick={createProject} data-testid={IDS.CREATE_BUTTON}>
+                Create Project
+            </Button>
             <TableContainer>
                 <Table>
                     <TableHead>
@@ -227,7 +230,11 @@ const PageCreate = () => {
                                 <TableCell width={'20%'}>
                                     {getStatusIcon(step.status)}
                                 </TableCell>
-                                <TableCell>{step.statusMessage}</TableCell>
+                                <TableCell
+                                    data-testid={`${step.id}${STATUS_SUFFIX}`}
+                                >
+                                    {step.statusMessage}
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

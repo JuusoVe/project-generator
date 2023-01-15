@@ -13,6 +13,12 @@ export const urlNavigateTo = async (page: Page, url: string) => {
     await expect(page).toHaveURL(url);
 };
 
+export const clickButton = async (page: Page, buttonId: string) => {
+    const button = page.getByTestId(buttonId);
+    await expect(button).toBeVisible();
+    await button.click();
+};
+
 export const fillTextField = async (
     page: Page,
     fieldId: string,

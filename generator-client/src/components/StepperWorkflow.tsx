@@ -22,13 +22,13 @@ const Connector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.active}`]: {
         [`& .${stepConnectorClasses.line}`]: {
             backgroundImage:
-                'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+                'linear-gradient( 136deg, rgb(52, 177, 235) 0%, rgb(21, 139, 194) 50%, rgb(21, 139, 194) 100%)',
         },
     },
     [`&.${stepConnectorClasses.completed}`]: {
         [`& .${stepConnectorClasses.line}`]: {
             backgroundImage:
-                'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+                'linear-gradient( 136deg, rgb(52, 177, 235) 0%, rgb(21, 139, 194) 50%, rgb(21, 139, 194) 100%)',
         },
     },
     [`& .${stepConnectorClasses.line}`]: {
@@ -55,12 +55,12 @@ const StepIconRoot = styled('div')<{
     alignItems: 'center',
     ...(ownerState.active && {
         backgroundImage:
-            'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+            'linear-gradient( 136deg, rgb(52, 177, 235) 0%, rgb(21, 139, 194) 50%, rgb(21, 139, 194) 100%)',
         boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
     }),
     ...(ownerState.completed && {
         backgroundImage:
-            'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+            'linear-gradient( 136deg, rgb(52, 177, 235) 0%, rgb(21, 139, 194) 50%, rgb(21, 139, 194) 100%)',
     }),
     cursor: 'pointer',
 }));
@@ -94,12 +94,12 @@ const steps: CreateStep[] = [
         route: ROUTES.CREATE.PREFERENCES,
     },
     {
-        label: 'Set API keys',
+        label: 'API keys',
         icon: <VpnKey />,
         route: ROUTES.CREATE.KEYS,
     },
     {
-        label: 'Create the project',
+        label: 'Create',
         icon: <VideoLabelIcon />,
         route: ROUTES.CREATE.GENERATE,
     },

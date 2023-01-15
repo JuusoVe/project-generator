@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useLocalStorage, useSessionStorage } from 'usehooks-ts';
 import { useGithubAPI } from '../apis/github';
 import { useVercelAPI } from '../apis/vercel';
-import { INITIAL_CREATE_STATE } from '../constants';
+import { IDS, INITIAL_CREATE_STATE } from '../constants';
 import { StepState, StorageKeys } from '../models';
 
 const DeleteResources = () => {
@@ -78,6 +78,7 @@ const DeleteResources = () => {
     return (
         <Stack>
             <Typography
+                data-testid={IDS.REPO_DELETE_STATUS}
                 variant="h6"
                 sx={{
                     color: destroyRepoSuccess ? 'primary.main' : 'error.main',
@@ -86,6 +87,7 @@ const DeleteResources = () => {
                 {destroyRepoStatusText}
             </Typography>
             <Typography
+                data-testid={IDS.FRONTEND_DELETE_STATUS}
                 variant="h6"
                 sx={{
                     color: destroyFrontendSuccess
@@ -95,8 +97,12 @@ const DeleteResources = () => {
             >
                 {destroyFrontendStatusText}
             </Typography>
-            <Button onClick={deleteResources}>Delete resources</Button>
-            <Button onClick={resetCreation}>Reset creation</Button>
+            <Button onClick={deleteResources} data-testid={IDS.DELETE_BUTTON}>
+                Delete resources
+            </Button>
+            <Button onClick={resetCreation} data-testid={IDS.RESET_BUTTON}>
+                Reset creation
+            </Button>
         </Stack>
     );
 };
